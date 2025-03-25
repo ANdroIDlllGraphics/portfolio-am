@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
 const App = () => {
@@ -36,10 +36,33 @@ const App = () => {
     },
   ];
 
+  const wordRefs = useRef([]);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      wordRefs.current.forEach((ref) => {
+        if (ref) {
+          const rect = ref.getBoundingClientRect();
+          if (rect.top < window.innerHeight && rect.bottom > 0) {
+            // La palabra está visible en la ventana
+            ref.classList.add("bg-orange-500", "text-black");
+          } else {
+            // La palabra no está visible
+            ref.classList.remove("bg-orange-500", "text-black");
+          }
+        }
+      });
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const wrapWords = (text) => {
     return text.split(" ").map((word, index) => (
       <span
         key={index}
+        ref={(el) => (wordRefs.current[index] = el)}
         className="inline-block px-1 py-0.5 mx-0.5 my-0.5 text-sm transition duration-300 hover:bg-orange-500 hover:text-black"
       >
         {word}
@@ -64,12 +87,12 @@ const App = () => {
   );
 
   return (
-    <div className="min-h-screen bg-black text-orange-500 font-mono px-2 py-0 relative">
+    <div className="min-h-screen bg-black text-orange-500 font-mono px-0 py-0 relative">
       {/* Cabecera */}
       <div className="flex justify-center">
         <div className="w-full max-w-5xl border border-orange-500">
-          <div className="flex flex-col sm:flex-row items-center justify-between">
-            <div className="bg-orange-500 text-black px-4 py-3 text-lg sm:text-xl font-bold w-full h-12 flex items-center">
+          <div className="flex flex-row items-center justify-between">
+            <div className="bg-orange-500 text-black px-4 py-3 text-xl font-bold w-full h-12 flex items-center">
               Zero // Andrés Martínez
             </div>
             <div className="flex flex-row flex-wrap gap-0 w-full h-12">
@@ -86,7 +109,7 @@ const App = () => {
                       section.scrollIntoView({ behavior: "smooth" });
                     }
                   }}
-                  className={`flex-1 px-2 sm:px-4 py-2 bg-black h-12 w-full ${
+                  className={`flex-1 px-4 py-2 bg-black h-12 w-full text-sm ${
                     hoveredButton === index
                       ? "bg-orange-500 text-black"
                       : "text-orange-500"
@@ -102,7 +125,7 @@ const App = () => {
       </div>
 
       {/* Contenido principal */}
-      <div className="max-w-5xl mx-auto px-2 sm:px-4 py-12">
+      <div className="max-w-5xl mx-auto px-4 py-12">
         <HoverTitle text="ABOUT ME" id="about-me" />
         <section className="my-24">
           <div className="px-4 text-justify w-full">
@@ -119,26 +142,29 @@ const App = () => {
         </div>
 
         <HoverTitle text="PROJECTS" bg={true} id="projects" />
-        <section className="bg-orange-500 text-black px-2 sm:px-6 py-10 flex flex-col justify-end relative">
+        <section className="bg-orange-500 text-black px-0 py-10 flex flex-col justify-end relative">
           <div
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 p-4 sm:p-6 items-end relative"
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6 items-end relative"
             style={{ maxWidth: "90%", margin: "0 auto" }}
           >
             {projects.map((project, index) =>
               project ? (
                 <button
                   key={index}
-                  onClick={() =>
-                    setExpandedProject(
-                      expandedProject === project.id ? null : project.id
-                    )
-                  }
-                  className="relative px-4 sm:px-6 pt-6 pb-16 bg-black text-orange-500 hover:bg-orange-500 hover:text-black transition-colors shadow-md clip-folder flex items-start"
+                  onClick={() => {
+                    setExpandedProject(project.id); // Aseguramos que el proyecto se expanda
+                    setTimeout(() => {
+                      const section = document.getElementById(project.id);
+                      if (section) {
+                        section.scrollIntoView({ behavior: "smooth" });
+                      }
+                    }, 100); // Agregamos un pequeño retraso para garantizar que la sección esté visible
+                  }}
+                  className="relative px-6 pt-6 pb-16 bg-black text-orange-500 hover:bg-orange-500 hover:text-black transition-colors shadow-md clip-folder flex items-start"
                   style={{
-                    height: "100px",
+                    height: "120px",
                     border: "2px solid black",
-                    width: "100%",
-                    maxWidth: "280px",
+                    width: "305px",
                   }}
                 >
                   {project.title}
@@ -157,6 +183,7 @@ const App = () => {
             expandedProject === project.id && (
               <section
                 key={project.id}
+                id={project.id}
                 className="text-orange-500 bg-black px-4 py-8 max-w-5xl mx-auto"
               >
                 <HoverTitle text={project.title} />
@@ -164,11 +191,23 @@ const App = () => {
                   <p className="mb-4">
                     Details and description of the project: {project.title}
                   </p>
-                  <img
-                    src="/placeholder.png"
-                    alt="Placeholder"
-                    className="w-full mb-4"
-                  />
+                  <div className="flex flex-wrap justify-between gap-4 mb-4">
+                    <img
+                      src="/image1.png"
+                      alt={`${project.title} image 1`}
+                      className="w-full sm:w-[32%] h-auto"
+                    />
+                    <img
+                      src="/image2.png"
+                      alt={`${project.title} image 2`}
+                      className="w-full sm:w-[32%] h-auto"
+                    />
+                    <img
+                      src="/image3.png"
+                      alt={`${project.title} image 3`}
+                      className="w-full sm:w-[32%] h-auto"
+                    />
+                  </div>
                   {project.videoUrl && (
                     <iframe
                       width="100%"
@@ -188,16 +227,16 @@ const App = () => {
 
         <div className="mt-24"></div>
         <HoverTitle id="contact" text="CONTACT" />
-        <section id="contact" className="mt-[-10px] mb-0 px-2 sm:px-4">
-          <div className="flex flex-col">
+        <section id="contact" className="mt-[-10px] mb-0">
+          <div className="flex flex-col px-4">
             <div className="text-justify max-w-full">
-              <p className="mb-[30px] sm:mb-[50px] text-sm">
+              <p className="mb-[50px] text-sm">
                 {wrapWords(
                   "Hire visuals? Ask weird questions? Let's collaborate or just say hi!"
                 )}
               </p>
             </div>
-            <div className="flex flex-col sm:flex-row justify-start gap-4 flex-wrap">
+            <div className="flex flex-row justify-start gap-4 flex-wrap">
               {[
                 {
                   label: "MAIL",
@@ -222,11 +261,7 @@ const App = () => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="py-3 px-4 text-sm bg-black hover:bg-orange-500 text-orange-500 hover:text-black transition-colors text-left"
-                  style={{
-                    minWidth: "100%",
-                    maxWidth: "100%",
-                    sm: { minWidth: "200px", maxWidth: "200px" },
-                  }}
+                  style={{ minWidth: "200px", maxWidth: "200px" }}
                 >
                   {label}
                 </a>
@@ -246,6 +281,21 @@ const App = () => {
       <style>{`
         .clip-folder {
           clip-path: polygon(0% 15%, 10% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 15%);
+        }
+        /* Estilos personalizados para la barra de desplazamiento */
+        ::-webkit-scrollbar {
+          width: 12px;
+        }
+        ::-webkit-scrollbar-track {
+          background: black;
+        }
+        ::-webkit-scrollbar-thumb {
+          background-color: orange;
+          border: none;
+        }
+        ::-webkit-scrollbar-button {
+          background-color: orange;
+          border: none;
         }
       `}</style>
     </div>
