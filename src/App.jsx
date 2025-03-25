@@ -15,7 +15,7 @@ const TypingEffect = ({ text }) => {
       } else {
         clearInterval(typingInterval);
       }
-    }, 50);
+    }, 50); // Velocidad aumentada
 
     const cursorBlinkInterval = setInterval(() => {
       setCursorVisible((prev) => !prev);
@@ -48,7 +48,7 @@ const App = () => {
   const [hoveredButton, setHoveredButton] = useState(null);
   const [expandedProject, setExpandedProject] = useState(null);
 
-  const buttons = ["System", "Contact"];
+  const buttons = ["System", "Contact"]; // Elimina "Home" y "Projects"
 
   const projects = [
     null,
@@ -79,7 +79,20 @@ const App = () => {
     },
   ];
 
-  const HoverTitle = ({ id, text, bg = false }) => (
+  const wordRefs = useRef([]);
+
+  const wrapWords = (text) => {
+    return text.split(" ").map((word, index) => (
+      <span
+        key={index}
+        className="inline-block px-1 py-0.5 mx-0.5 my-0.5 text-sm transition duration-300 bg-orange-500 text-black hover:bg-black hover:text-orange-500"
+      >
+        {word}
+      </span>
+    ));
+  };
+
+  const HoverTitle = ({ id, text, bg = false, style }) => (
     <motion.div
       id={id}
       className={`w-full ${
@@ -88,7 +101,8 @@ const App = () => {
           : "bg-black hover:bg-orange-500 hover:text-black"
       } py-2 mb-0 text-4xl md:text-5xl font-sans tracking-widest transition-colors duration-300 font-black`}
       style={{
-        transform: id === "contact" ? "translateY(-60px)" : "translateY(-30px)",
+        transform: id === "contact" ? "translateY(-60px)" : "translateY(-30px)", // Sube el recuadro responsivo
+        ...style,
       }}
     >
       <div className="max-w-5xl mx-auto px-4 font-mono uppercase h-12 flex items-center text-xl font-bold">
@@ -96,6 +110,13 @@ const App = () => {
       </div>
     </motion.div>
   );
+
+  const navigateToProjects = () => {
+    const section = document.getElementById("projects");
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   return (
     <div className="min-h-screen bg-black text-orange-500 font-mono px-0 py-0 relative">
@@ -113,10 +134,15 @@ const App = () => {
                   onMouseEnter={() => setHoveredButton(index)}
                   onMouseLeave={() => setHoveredButton(null)}
                   onClick={() => {
-                    const sectionId = btn === "System" ? "projects" : btn.toLowerCase().replace(/ /g, "-");
-                    const section = document.getElementById(sectionId);
-                    if (section) {
-                      section.scrollIntoView({ behavior: "smooth" });
+                    if (btn === "System") {
+                      navigateToProjects(); // Redirige a "Projects"
+                    } else {
+                      const section = document.getElementById(
+                        btn.toLowerCase().replace(/ /g, "-")
+                      );
+                      if (section) {
+                        section.scrollIntoView({ behavior: "smooth" });
+                      }
                     }
                   }}
                   className={`flex-1 px-4 py-2 bg-black h-12 w-full text-sm ${
@@ -134,22 +160,20 @@ const App = () => {
         </div>
       </div>
 
-      {/* GIF encima de "About Me" */}
-      <div className="w-full max-w-5xl mx-auto">
-        <img src="/faces.gif" alt="About Me GIF" className="w-full h-auto" />
+      {/* GIF debajo del menú inicial */}
+      <div className="w-full">
+        <img src="/spirals.gif" alt="About Me GIF" className="w-full h-auto" />
       </div>
 
+      {/* Sección "About Me" */}
       <HoverTitle text="ABOUT ME" id="about-me" />
-      <section className="my-24">
-        <div
-          className="px-4 text-justify w-full border border-orange-500 p-4 max-w-5xl mx-auto"
-          style={{ marginTop: "-110px", marginBottom: "0px" }} // Sube el cuadro de texto 110px
-        >
+      <section className="my-0"> {/* Elimina el margen superior */}
+        <div className="px-4 text-justify w-full relative">
           <p className="mb-10 text-sm">
             <TypingEffect text={`I'm a multimedia artist based in Colombia. My work is rooted in personal experiences, concept, and graphics.\nI've created immersive visuals for international airports and museums using large-format LED displays.\nPassionate about merging code, sound, and emotion into futuristic art pieces.`} />
           </p>
-          {/* Botones debajo del cuadro de texto */}
-          <div className="flex gap-4 mt-4">
+          {/* Botones dentro del cuadro de texto */}
+          <div className="flex justify-end gap-2 mt-4">
             <button className="px-4 py-2 text-sm bg-black text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-black transition-colors">
               Cancel
             </button>
@@ -160,18 +184,22 @@ const App = () => {
         </div>
       </section>
 
-      {/* GIF encima de "Projects" */}
-      <div className="w-full max-w-5xl mx-auto" style={{ marginTop: "0px" }}> {/* Margen superior ajustado a 0px */}
+      {/* GIF debajo de "About Me" */}
+      <div className="w-full" style={{ marginTop: "40px" }}> {/* Elimina el margen superior */}
         <img src="/blue.gif" alt="Projects GIF" className="w-full h-auto" />
       </div>
 
-      <HoverTitle text="PROJECTS" bg={true} id="projects" />
-      <section
-        className="bg-orange-500 text-black px-0 py-10 flex flex-col justify-end relative"
-        style={{ marginTop: "0px" }} // Ajusta el margen superior a 0px
-      >
+      {/* Sección "Projects" */}
+      <HoverTitle
+        text="PROJECTS"
+        id="projects"
+        bg={true}
+        style={{ transform: "translateY(5px)" }} // Sube el título de "Projects" 10px
+      />
+      <section className="bg-orange-500 text-black px-0 py-10 flex flex-col justify-end relative" style={{ marginTop: "-10px" }}> {/* Sube la sección 10px */}
         <div
-          className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6 items-end relative"
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6 items-end relative"
+          style={{ maxWidth: "90%", margin: "0 auto" }}
         >
           {projects.map((project, index) =>
             project ? (
@@ -186,13 +214,12 @@ const App = () => {
                     }
                   }, 100);
                 }}
-                className="relative px-6 pt-6 pb-16 bg-black text-orange-500 hover:bg-orange-500 hover:text-black transition-colors shadow-md flex items-start"
+                className="relative px-6 pt-6 pb-16 bg-black text-orange-500 hover:bg-orange-500 hover:text-black transition-colors shadow-md clip-folder flex items-start"
                 style={{
                   height: "120px",
                   border: "2px solid black",
                   width: "305px",
-                  clipPath:
-                    "polygon(0% 15%, 10% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 15%)", // Bisel recto
+                  marginBottom: "20px",
                 }}
               >
                 {project.title}
@@ -213,7 +240,6 @@ const App = () => {
               key={project.id}
               id={project.id}
               className="text-orange-500 bg-black px-4 py-8 max-w-5xl mx-auto"
-              style={{ marginTop: "-50px" }} // Sube la sección 50px
             >
               <HoverTitle text={project.title} />
               <div className="py-4 text-sm">
@@ -254,22 +280,20 @@ const App = () => {
           )
       )}
 
-      {/* GIF encima de "Contact" */}
-      <div className="w-full max-w-5xl mx-auto">
-        <img src="/spirals.gif" alt="Contact GIF" className="w-full h-auto" />
+      {/* GIF debajo de "Projects" */}
+      <div className="w-full">
+        <img src="/faces.gif" alt="Contact GIF" className="w-full h-auto" />
       </div>
 
-      <HoverTitle id="contact" text="CONTACT" />
-      <section id="contact" className="mt-[-50px] mb-0"> {/* Mueve el párrafo 40px más arriba */}
-        <div className="flex flex-col px-4 max-w-5xl mx-auto">
-          <div
-            className="text-justify w-full border border-orange-500 p-4"
-            style={{ width: "90%", marginBottom: "20px" }} // Agrega un margen inferior de 20px
-          >
+      {/* Sección "Contact" */}
+      <HoverTitle id="contact" text="CONTACT" bg={true} />
+      <section id="contact" className="mt-0 mb-0"> {/* Elimina el margen superior */}
+        <div className="flex flex-col px-4">
+          <div className="text-justify max-w-full">
             <p className="mb-[50px] text-sm">
               <TypingEffect text={`Hire visuals? \nLet's collaborate or just say hi!`} />
             </p>
-            {/* Botones debajo del texto */}
+            {/* Botones dentro del cuadro de texto */}
             <div className="flex flex-col gap-2 mt-4">
               {[
                 {
@@ -305,48 +329,93 @@ const App = () => {
         </div>
       </section>
 
+      <div className="mt-24"></div>
+
       {/* Imagen inferior */}
-      <div className="w-full max-w-5xl mx-auto">
-        <img
-          src="/bg-af.gif"
-          alt="background animation"
-          className="w-full h-auto"
-        />
-      </div>
+      <img
+        src="/bg-af.gif"
+        alt="background animation"
+        className="w-full mt-0 max-w-5xl mx-auto"
+      />
+
+      <style>{`
+        .clip-folder {
+          clip-path: polygon(0% 15%, 10% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 15%);
+        }
+        /* Estilos personalizados para la barra de desplazamiento */
+        ::-webkit-scrollbar {
+          width: 12px;
+        }
+        ::-webkit-scrollbar-track {
+          background: black;
+        }
+        ::-webkit-scrollbar-thumb {
+          background-color: #ff6600; /* Naranja de los títulos */
+          border-radius: 6px; /* Bordes redondeados */
+          border: 3px solid black; /* Añade un borde negro */
+        }
+        ::-webkit-scrollbar-thumb:hover {
+          background-color: #e65c00; /* Naranja más oscuro al pasar el mouse */
+        }
+        /* Compatibilidad con navegadores que soportan scrollbar-color */
+        html {
+          scrollbar-width: thin; /* Scrollbar delgado */
+          scrollbar-color: #ff6600 black; /* Naranja y negro */
+        }
+        body::-webkit-scrollbar {
+          width: 32px; /* Asegura que el scrollbar se muestre */
+        }
+        /* Habilitar scrollbar en dispositivos móviles */
+        @media (max-width: 640px) {
+          ::-webkit-scrollbar {
+            width: 58px; /* Scrollbar más delgado en pantallas pequeñas */
+          }
+        }
+        /* Estilo del puntero */
+        body {
+        }
+        /* Contenedor del texto tipeado */
+        .typing-container {
+          font-family: monospace;
+          white-space: pre-wrap;
+          display: block;
+          background-color: rgb(14, 14, 14);
+          color: #ff6600; /* Naranja de los títulos */
+          padding: 16px;
+          border: 2px solid #ff6600; /* Naranja de los títulos */
+          border-radius: 0px; /* Cambia a esquinas rectas */
+          max-width: 100%;
+          max-height: auto; /* Ajusta el tamaño para evitar scroll */
+          overflow: hidden; /* Elimina la barra de desplazamiento */
+          margin: 0 auto;
+          box-sizing: border-box;
+        }
+        @media (min-width: 640px) {
+          .typing-container {
+            max-width: 80%;
+          }
+        }
+        @media (min-width: 1024px) {
+          .typing-container {
+            max-width: 60%;
+          }
+        }
+        .cursor {
+          display: inline-block;
+          width: 1ch;
+          background-color: #ff6600; /* Naranja de los títulos */
+        }
+        .cursor.invisible {
+          background-color: transparent;
+        }
+      `}</style>
     </div>
   );
+
 };
 
 export default App;
 
-<style>{`
-  .clip-folder {
-    clip-path: polygon(0% 15%, 10% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 15%);
-  }
-  /* Estilos personalizados para la barra de desplazamiento */
-  ::-webkit-scrollbar {
-    width: 12px;
-  }
-  ::-webkit-scrollbar-track {
-    background: black;
-  }
-  ::-webkit-scrollbar-thumb {
-    background-color: #ff6600; /* Naranja de los títulos */
-    border: none;
-  }
-  ::-webkit-scrollbar-button {
-    background-color: #ff6600; /* Naranja de los títulos */
-    border: none;
-  }
-  /* Habilitar scrollbar en dispositivos móviles */
-  html {
-    scrollbar-width: thin;
-    scrollbar-color: #ff6600 black;
-  }
-  body::-webkit-scrollbar {
-    display: block;
-  }
-`}</style>
 
 
 
