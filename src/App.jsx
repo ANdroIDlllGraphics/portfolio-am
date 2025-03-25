@@ -113,9 +113,8 @@ const App = () => {
                   onMouseEnter={() => setHoveredButton(index)}
                   onMouseLeave={() => setHoveredButton(null)}
                   onClick={() => {
-                    const section = document.getElementById(
-                      btn.toLowerCase().replace(/ /g, "-")
-                    );
+                    const sectionId = btn === "System" ? "projects" : btn.toLowerCase().replace(/ /g, "-");
+                    const section = document.getElementById(sectionId);
                     if (section) {
                       section.scrollIntoView({ behavior: "smooth" });
                     }
@@ -142,23 +141,37 @@ const App = () => {
 
       <HoverTitle text="ABOUT ME" id="about-me" />
       <section className="my-24">
-        <div className="px-4 text-justify w-full border border-orange-500 p-4 max-w-5xl mx-auto">
+        <div
+          className="px-4 text-justify w-full border border-orange-500 p-4 max-w-5xl mx-auto"
+          style={{ marginTop: "-110px", marginBottom: "0px" }} // Sube el cuadro de texto 110px
+        >
           <p className="mb-10 text-sm">
             <TypingEffect text={`I'm a multimedia artist based in Colombia. My work is rooted in personal experiences, concept, and graphics.\nI've created immersive visuals for international airports and museums using large-format LED displays.\nPassionate about merging code, sound, and emotion into futuristic art pieces.`} />
           </p>
+          {/* Botones debajo del cuadro de texto */}
+          <div className="flex gap-4 mt-4">
+            <button className="px-4 py-2 text-sm bg-black text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-black transition-colors">
+              Cancel
+            </button>
+            <button className="px-4 py-2 text-sm bg-orange-500 text-black border border-orange-500 hover:bg-black hover:text-orange-500 transition-colors">
+              Accept
+            </button>
+          </div>
         </div>
       </section>
 
       {/* GIF encima de "Projects" */}
-      <div className="w-full max-w-5xl mx-auto">
+      <div className="w-full max-w-5xl mx-auto" style={{ marginTop: "0px" }}> {/* Margen superior ajustado a 0px */}
         <img src="/blue.gif" alt="Projects GIF" className="w-full h-auto" />
       </div>
 
       <HoverTitle text="PROJECTS" bg={true} id="projects" />
-      <section className="bg-orange-500 text-black px-0 py-10 flex flex-col justify-end relative">
+      <section
+        className="bg-orange-500 text-black px-0 py-10 flex flex-col justify-end relative"
+        style={{ marginTop: "0px" }} // Ajusta el margen superior a 0px
+      >
         <div
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6 items-end relative"
-          style={{ maxWidth: "90%", margin: "0 auto" }}
+          className="max-w-5xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6 items-end relative"
         >
           {projects.map((project, index) =>
             project ? (
@@ -200,6 +213,7 @@ const App = () => {
               key={project.id}
               id={project.id}
               className="text-orange-500 bg-black px-4 py-8 max-w-5xl mx-auto"
+              style={{ marginTop: "-50px" }} // Sube la sección 50px
             >
               <HoverTitle text={project.title} />
               <div className="py-4 text-sm">
@@ -246,9 +260,12 @@ const App = () => {
       </div>
 
       <HoverTitle id="contact" text="CONTACT" />
-      <section id="contact" className="mt-[-10px] mb-0">
+      <section id="contact" className="mt-[-50px] mb-0"> {/* Mueve el párrafo 40px más arriba */}
         <div className="flex flex-col px-4 max-w-5xl mx-auto">
-          <div className="text-justify w-full border border-orange-500 p-4">
+          <div
+            className="text-justify w-full border border-orange-500 p-4"
+            style={{ width: "90%", marginBottom: "20px" }} // Agrega un margen inferior de 20px
+          >
             <p className="mb-[50px] text-sm">
               <TypingEffect text={`Hire visuals? \nLet's collaborate or just say hi!`} />
             </p>
