@@ -20,12 +20,12 @@ const App = () => {
       videoUrl: "https://www.youtube.com/embed/YOcFZgVmw0g",
     },
     {
-      title: "Molas full 360° LED Screens",
+      title: "Molas full 360 LED Screens",
       id: "project4",
       videoUrl: "https://www.youtube.com/embed/nr8RBAF7zN4",
     },
     {
-      title: "No Jardín",
+      title: "No Jardin",
       id: "project5",
       videoUrl: "https://www.youtube.com/embed/U-ZVmD3W4wI",
     },
@@ -38,31 +38,10 @@ const App = () => {
 
   const wordRefs = useRef([]);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      wordRefs.current.forEach((ref) => {
-        if (ref) {
-          const rect = ref.getBoundingClientRect();
-          if (rect.top < window.innerHeight && rect.bottom > 0) {
-            // La palabra está visible en la ventana
-            ref.classList.add("bg-orange-500", "text-black");
-          } else {
-            // La palabra no está visible
-            ref.classList.remove("bg-orange-500", "text-black");
-          }
-        }
-      });
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   const wrapWords = (text) => {
     return text.split(" ").map((word, index) => (
       <span
         key={index}
-        ref={(el) => (wordRefs.current[index] = el)}
         className="inline-block px-1 py-0.5 mx-0.5 my-0.5 text-sm transition duration-300 hover:bg-orange-500 hover:text-black"
       >
         {word}
@@ -92,7 +71,7 @@ const App = () => {
       <div className="flex justify-center">
         <div className="w-full max-w-5xl border border-orange-500">
           <div className="flex flex-row items-center justify-between">
-            <div className="bg-orange-500 text-black px-4 py-3 text-xl font-bold w-full h-12 flex items-center">
+            <div className="bg-orange-500 text-black px-4 py-3 text-xl font-bold w-full h-12 flex items-center font-sans tracking-widest uppercase">
               Zero // Andrés Martínez
             </div>
             <div className="flex flex-row flex-wrap gap-0 w-full h-12">
@@ -131,7 +110,7 @@ const App = () => {
           <div className="px-4 text-justify w-full">
             <p className="mb-10 text-sm">
               {wrapWords(
-                "I’m a multimedia artist based in Colombia. My work is rooted in personal experiences, concept, and graphics. I’ve created immersive visuals for international airports and museums using large-format LED displays. Passionate about merging code, sound, and emotion into futuristic art pieces."
+                "I'm a multimedia artist based in Colombia. My work is rooted in personal experiences, concept, and graphics. I've created immersive visuals for international airports and museums using large-format LED displays. Passionate about merging code, sound, and emotion into futuristic art pieces."
               )}
             </p>
           </div>
@@ -236,36 +215,47 @@ const App = () => {
                 )}
               </p>
             </div>
-            <div className="flex flex-row justify-start gap-4 flex-wrap">
-              {[
-                {
-                  label: "MAIL",
-                  href: "mailto:johhannmartinez@hotmail.com",
-                },
-                {
-                  label: "INSTAGRAM",
-                  href: "https://instagram.com/punk_bit",
-                },
-                {
-                  label: "BEHANCE",
-                  href: "https://www.behance.net/johhannmartnez",
-                },
-                {
-                  label: "YOUTUBE",
-                  href: "https://www.youtube.com/@ANdroIDGraphics00",
-                },
-              ].map(({ label, href }, idx) => (
-                <a
-                  key={idx}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="py-3 px-4 text-sm bg-black hover:bg-orange-500 text-orange-500 hover:text-black transition-colors text-left"
-                  style={{ minWidth: "200px", maxWidth: "200px" }}
-                >
-                  {label}
-                </a>
-              ))}
+            <div className="flex flex-row items-start justify-end gap-4">
+              {/* Simulación de carpeta */}
+              <div className="relative w-8 h-full">
+                <div className="absolute left-0 top-0 w-1 bg-orange-500 h-full"></div>
+                <div className="absolute left-0 top-[20%] w-6 h-0.5 bg-orange-500"></div>
+                <div className="absolute left-0 top-[40%] w-6 h-0.5 bg-orange-500"></div>
+                <div className="absolute left-0 top-[60%] w-6 h-0.5 bg-orange-500"></div>
+                <div className="absolute left-0 top-[80%] w-6 h-0.5 bg-orange-500"></div>
+              </div>
+              {/* Botones ajustados */}
+              <div className="flex flex-col gap-2">
+                {[
+                  {
+                    label: "MAIL",
+                    href: "mailto:johhannmartinez@hotmail.com",
+                  },
+                  {
+                    label: "INSTAGRAM",
+                    href: "https://instagram.com/punk_bit",
+                  },
+                  {
+                    label: "BEHANCE",
+                    href: "https://www.behance.net/johhannmartnez",
+                  },
+                  {
+                    label: "YOUTUBE",
+                    href: "https://www.youtube.com/@ANdroIDGraphics00",
+                  },
+                ].map(({ label, href }, idx) => (
+                  <a
+                    key={idx}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="py-2 px-4 text-sm bg-black hover:bg-orange-500 text-orange-500 hover:text-black transition-colors text-left"
+                    style={{ minWidth: "200px" }}
+                  >
+                    {label}
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
         </section>
@@ -296,6 +286,10 @@ const App = () => {
         ::-webkit-scrollbar-button {
           background-color: orange;
           border: none;
+        }
+        /* Estilo del puntero */
+        body {
+          cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 32 32"><circle cx="16" cy="16" r="15" fill="orange" stroke="orange" stroke-width="2"/><circle cx="16" cy="16" r="5" fill="black"/></svg>') 8 8, auto;
         }
       `}</style>
     </div>
