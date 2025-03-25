@@ -48,7 +48,7 @@ const App = () => {
   const [hoveredButton, setHoveredButton] = useState(null);
   const [expandedProject, setExpandedProject] = useState(null);
 
-  const buttons = ["Home", "System", "Projects", "Contact"]; // Cambia "About Me" por "System"
+  const buttons = ["System", "Contact"]; // Elimina "Home" y "Projects"
 
   const projects = [
     null,
@@ -110,6 +110,13 @@ const App = () => {
     </motion.div>
   );
 
+  const navigateToProjects = () => {
+    const section = document.getElementById("projects");
+    if (section) {
+      section.scrollIntoView({ behavior: "smooth" });
+    }
+  };
+
   return (
     <div className="min-h-screen bg-black text-orange-500 font-mono px-0 py-0 relative">
       {/* Cabecera */}
@@ -126,11 +133,15 @@ const App = () => {
                   onMouseEnter={() => setHoveredButton(index)}
                   onMouseLeave={() => setHoveredButton(null)}
                   onClick={() => {
-                    const section = document.getElementById(
-                      btn.toLowerCase().replace(/ /g, "-")
-                    );
-                    if (section) {
-                      section.scrollIntoView({ behavior: "smooth" });
+                    if (btn === "System") {
+                      navigateToProjects(); // Redirige a "Projects"
+                    } else {
+                      const section = document.getElementById(
+                        btn.toLowerCase().replace(/ /g, "-")
+                      );
+                      if (section) {
+                        section.scrollIntoView({ behavior: "smooth" });
+                      }
                     }
                   }}
                   className={`flex-1 px-4 py-2 bg-black h-12 w-full text-sm ${
@@ -262,10 +273,10 @@ const App = () => {
           <div className="flex flex-col px-4">
             <div className="text-justify max-w-full">
               <p className="mb-[50px] text-sm">
-                <TypingEffect text={`Hire visuals? Ask weird questions?\nLet's collaborate or just say hi!`} />
+                <TypingEffect text={`Hire visuals? \nLet's collaborate or just say hi!`} />
               </p>
             </div>
-            <div className="flex flex-row items-start justify-end gap-4">
+            <div className="flex flex-row items-start justify-end gap-4 relative">
               {/* Simulación de carpeta */}
               <div className="relative w-8 h-full">
                 <div className="absolute left-0 top-0 w-1 bg-orange-500 h-full"></div>
@@ -274,6 +285,8 @@ const App = () => {
                 <div className="absolute left-0 top-[60%] w-6 h-0.5 bg-orange-500"></div>
                 <div className="absolute left-0 top-[80%] w-6 h-0.5 bg-orange-500"></div>
               </div>
+              {/* Nueva línea desde la derecha */}
+              <div className="absolute right-0 top-[80%] w-[calc(100%-200px)] h-0.5 bg-orange-500"></div>
               {/* Botones ajustados */}
               <div className="flex flex-col gap-2">
                 {[
