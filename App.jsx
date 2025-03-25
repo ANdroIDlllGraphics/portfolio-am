@@ -1,11 +1,54 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
+// Componente para el efecto de tipeo
+const TypingEffect = ({ text }) => {
+  const [displayedText, setDisplayedText] = useState("");
+  const [cursorVisible, setCursorVisible] = useState(true);
+
+  useEffect(() => {
+    let index = 0;
+    const typingInterval = setInterval(() => {
+      if (index < text.length) {
+        setDisplayedText((prev) => prev + text[index]);
+        index++;
+      } else {
+        clearInterval(typingInterval);
+      }
+    }, 50);
+
+    const cursorBlinkInterval = setInterval(() => {
+      setCursorVisible((prev) => !prev);
+    }, 500);
+
+    return () => {
+      clearInterval(typingInterval);
+      clearInterval(cursorBlinkInterval);
+    };
+  }, [text]);
+
+  return (
+    <div className="typing-container">
+      {displayedText.split("\n").map((line, idx) => (
+        <span key={idx}>
+          {line}
+          <br />
+        </span>
+      ))}
+      {displayedText.length < text.length && (
+        <span className={`cursor ${cursorVisible ? "visible" : "invisible"}`}>
+          █
+        </span>
+      )}
+    </div>
+  );
+};
+
 const App = () => {
   const [hoveredButton, setHoveredButton] = useState(null);
   const [expandedProject, setExpandedProject] = useState(null);
 
-  const buttons = ["Home", "About Me", "Projects", "Contact"];
+  const buttons = ["System", "Contact"];
 
   const projects = [
     null,
@@ -20,12 +63,12 @@ const App = () => {
       videoUrl: "https://www.youtube.com/embed/YOcFZgVmw0g",
     },
     {
-      title: "Molas full 360° LED Screens",
+      title: "Molas full 360 LED Screens",
       id: "project4",
       videoUrl: "https://www.youtube.com/embed/nr8RBAF7zN4",
     },
     {
-      title: "No Jardín",
+      title: "No Jardin",
       id: "project5",
       videoUrl: "https://www.youtube.com/embed/U-ZVmD3W4wI",
     },
@@ -36,40 +79,6 @@ const App = () => {
     },
   ];
 
-  const wordRefs = useRef([]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      wordRefs.current.forEach((ref) => {
-        if (ref) {
-          const rect = ref.getBoundingClientRect();
-          if (rect.top < window.innerHeight && rect.bottom > 0) {
-            // La palabra está visible en la ventana
-            ref.classList.add("bg-orange-500", "text-black");
-          } else {
-            // La palabra no está visible
-            ref.classList.remove("bg-orange-500", "text-black");
-          }
-        }
-      });
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
-  const wrapWords = (text) => {
-    return text.split(" ").map((word, index) => (
-      <span
-        key={index}
-        ref={(el) => (wordRefs.current[index] = el)}
-        className="inline-block px-1 py-0.5 mx-0.5 my-0.5 text-sm transition duration-300 hover:bg-orange-500 hover:text-black"
-      >
-        {word}
-      </span>
-    ));
-  };
-
   const HoverTitle = ({ id, text, bg = false }) => (
     <motion.div
       id={id}
@@ -78,7 +87,9 @@ const App = () => {
           ? "bg-orange-500 text-black"
           : "bg-black hover:bg-orange-500 hover:text-black"
       } py-2 mb-0 text-4xl md:text-5xl font-sans tracking-widest transition-colors duration-300 font-black`}
-      style={{ transform: id === "contact" ? "translateY(-60px)" : "none" }}
+      style={{
+        transform: id === "contact" ? "translateY(-60px)" : "translateY(-30px)",
+      }}
     >
       <div className="max-w-5xl mx-auto px-4 font-mono uppercase h-12 flex items-center text-xl font-bold">
         {text}
@@ -92,8 +103,8 @@ const App = () => {
       <div className="flex justify-center">
         <div className="w-full max-w-5xl border border-orange-500">
           <div className="flex flex-row items-center justify-between">
-            <div className="bg-orange-500 text-black px-4 py-3 text-xl font-bold w-full h-12 flex items-center">
-              Zero // Andrés Martínez
+            <div className="bg-orange-500 text-black px-4 py-3 text-xl font-bold w-full h-12 flex items-center font-sans tracking-widest uppercase">
+              punk_bit
             </div>
             <div className="flex flex-row flex-wrap gap-0 w-full h-12">
               {buttons.map((btn, index) => (
@@ -124,119 +135,125 @@ const App = () => {
         </div>
       </div>
 
-      {/* Contenido principal */}
-      <div className="max-w-5xl mx-auto px-4 py-12">
-        <HoverTitle text="ABOUT ME" id="about-me" />
-        <section className="my-24">
-          <div className="px-4 text-justify w-full">
-            <p className="mb-10 text-sm">
-              {wrapWords(
-                "I’m a multimedia artist based in Colombia. My work is rooted in personal experiences, concept, and graphics. I’ve created immersive visuals for international airports and museums using large-format LED displays. Passionate about merging code, sound, and emotion into futuristic art pieces."
-              )}
-            </p>
-          </div>
-        </section>
+      {/* GIF encima de "About Me" */}
+      <div className="w-full max-w-5xl mx-auto">
+        <img src="/faces.gif" alt="About Me GIF" className="w-full h-auto" />
+      </div>
 
-        <div className="w-full">
-          <img src="/blue.gif" alt="preview" className="w-full" />
+      <HoverTitle text="ABOUT ME" id="about-me" />
+      <section className="my-24">
+        <div className="px-4 text-justify w-full border border-orange-500 p-4 max-w-5xl mx-auto">
+          <p className="mb-10 text-sm">
+            <TypingEffect text={`I'm a multimedia artist based in Colombia. My work is rooted in personal experiences, concept, and graphics.\nI've created immersive visuals for international airports and museums using large-format LED displays.\nPassionate about merging code, sound, and emotion into futuristic art pieces.`} />
+          </p>
         </div>
+      </section>
 
-        <HoverTitle text="PROJECTS" bg={true} id="projects" />
-        <section className="bg-orange-500 text-black px-0 py-10 flex flex-col justify-end relative">
-          <div
-            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6 items-end relative"
-            style={{ maxWidth: "90%", margin: "0 auto" }}
-          >
-            {projects.map((project, index) =>
-              project ? (
-                <button
-                  key={index}
-                  onClick={() => {
-                    setExpandedProject(project.id); // Aseguramos que el proyecto se expanda
-                    setTimeout(() => {
-                      const section = document.getElementById(project.id);
-                      if (section) {
-                        section.scrollIntoView({ behavior: "smooth" });
-                      }
-                    }, 100); // Agregamos un pequeño retraso para garantizar que la sección esté visible
-                  }}
-                  className="relative px-6 pt-6 pb-16 bg-black text-orange-500 hover:bg-orange-500 hover:text-black transition-colors shadow-md clip-folder flex items-start"
-                  style={{
-                    height: "120px",
-                    border: "2px solid black",
-                    width: "305px",
-                  }}
-                >
-                  {project.title}
-                </button>
-              ) : (
-                <div key={index}></div>
-              )
-            )}
-          </div>
-        </section>
+      {/* GIF encima de "Projects" */}
+      <div className="w-full max-w-5xl mx-auto">
+        <img src="/blue.gif" alt="Projects GIF" className="w-full h-auto" />
+      </div>
 
-        {/* Secciones de proyectos expandidos */}
-        {projects.map(
-          (project) =>
-            project &&
-            expandedProject === project.id && (
-              <section
-                key={project.id}
-                id={project.id}
-                className="text-orange-500 bg-black px-4 py-8 max-w-5xl mx-auto"
+      <HoverTitle text="PROJECTS" bg={true} id="projects" />
+      <section className="bg-orange-500 text-black px-0 py-10 flex flex-col justify-end relative">
+        <div
+          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6 items-end relative"
+          style={{ maxWidth: "90%", margin: "0 auto" }}
+        >
+          {projects.map((project, index) =>
+            project ? (
+              <button
+                key={index}
+                onClick={() => {
+                  setExpandedProject(project.id);
+                  setTimeout(() => {
+                    const section = document.getElementById(project.id);
+                    if (section) {
+                      section.scrollIntoView({ behavior: "smooth" });
+                    }
+                  }, 100);
+                }}
+                className="relative px-6 pt-6 pb-16 bg-black text-orange-500 hover:bg-orange-500 hover:text-black transition-colors shadow-md flex items-start"
+                style={{
+                  height: "120px",
+                  border: "2px solid black",
+                  width: "305px",
+                  clipPath:
+                    "polygon(0% 15%, 10% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 15%)", // Bisel recto
+                }}
               >
-                <HoverTitle text={project.title} />
-                <div className="py-4 text-sm">
-                  <p className="mb-4">
-                    Details and description of the project: {project.title}
-                  </p>
-                  <div className="flex flex-wrap justify-between gap-4 mb-4">
-                    <img
-                      src="/image1.png"
-                      alt={`${project.title} image 1`}
-                      className="w-full sm:w-[32%] h-auto"
-                    />
-                    <img
-                      src="/image2.png"
-                      alt={`${project.title} image 2`}
-                      className="w-full sm:w-[32%] h-auto"
-                    />
-                    <img
-                      src="/image3.png"
-                      alt={`${project.title} image 3`}
-                      className="w-full sm:w-[32%] h-auto"
-                    />
-                  </div>
-                  {project.videoUrl && (
-                    <iframe
-                      width="100%"
-                      height="315"
-                      src={`${project.videoUrl}?rel=0&autoplay=0`}
-                      title={`${project.title} video`}
-                      frameBorder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      className="w-full"
-                    />
-                  )}
-                </div>
-              </section>
+                {project.title}
+              </button>
+            ) : (
+              <div key={index}></div>
             )
-        )}
+          )}
+        </div>
+      </section>
 
-        <div className="mt-24"></div>
-        <HoverTitle id="contact" text="CONTACT" />
-        <section id="contact" className="mt-[-10px] mb-0">
-          <div className="flex flex-col px-4">
-            <div className="text-justify max-w-full">
-              <p className="mb-[50px] text-sm">
-                {wrapWords(
-                  "Hire visuals? Ask weird questions? Let's collaborate or just say hi!"
+      {/* Secciones de proyectos expandidos */}
+      {projects.map(
+        (project) =>
+          project &&
+          expandedProject === project.id && (
+            <section
+              key={project.id}
+              id={project.id}
+              className="text-orange-500 bg-black px-4 py-8 max-w-5xl mx-auto"
+            >
+              <HoverTitle text={project.title} />
+              <div className="py-4 text-sm">
+                <p className="mb-4">
+                  Details and description of the project: {project.title}
+                </p>
+                <div className="flex flex-wrap justify-between gap-4 mb-4">
+                  <img
+                    src="/image1.png"
+                    alt={`${project.title} image 1`}
+                    className="w-full sm:w-[32%] h-auto"
+                  />
+                  <img
+                    src="/image2.png"
+                    alt={`${project.title} image 2`}
+                    className="w-full sm:w-[32%] h-auto"
+                  />
+                  <img
+                    src="/image3.png"
+                    alt={`${project.title} image 3`}
+                    className="w-full sm:w-[32%] h-auto"
+                  />
+                </div>
+                {project.videoUrl && (
+                  <iframe
+                    width="100%"
+                    height="315"
+                    src={`${project.videoUrl}?rel=0&autoplay=0`}
+                    title={`${project.title} video`}
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                    className="w-full"
+                  />
                 )}
-              </p>
-            </div>
-            <div className="flex flex-row justify-start gap-4 flex-wrap">
+              </div>
+            </section>
+          )
+      )}
+
+      {/* GIF encima de "Contact" */}
+      <div className="w-full max-w-5xl mx-auto">
+        <img src="/spirals.gif" alt="Contact GIF" className="w-full h-auto" />
+      </div>
+
+      <HoverTitle id="contact" text="CONTACT" />
+      <section id="contact" className="mt-[-10px] mb-0">
+        <div className="flex flex-col px-4 max-w-5xl mx-auto">
+          <div className="text-justify w-full border border-orange-500 p-4">
+            <p className="mb-[50px] text-sm">
+              <TypingEffect text={`Hire visuals? \nLet's collaborate or just say hi!`} />
+            </p>
+            {/* Botones debajo del texto */}
+            <div className="flex flex-col gap-2 mt-4">
               {[
                 {
                   label: "MAIL",
@@ -260,50 +277,59 @@ const App = () => {
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="py-3 px-4 text-sm bg-black hover:bg-orange-500 text-orange-500 hover:text-black transition-colors text-left"
-                  style={{ minWidth: "200px", maxWidth: "200px" }}
+                  className="py-2 px-4 text-sm bg-black hover:bg-orange-500 text-orange-500 hover:text-black transition-colors text-left"
+                  style={{ minWidth: "200px" }}
                 >
                   {label}
                 </a>
               ))}
             </div>
           </div>
-        </section>
-      </div>
+        </div>
+      </section>
 
       {/* Imagen inferior */}
-      <img
-        src="/bg-af.gif"
-        alt="background animation"
-        className="w-full mt-0 max-w-5xl mx-auto"
-      />
-
-      <style>{`
-        .clip-folder {
-          clip-path: polygon(0% 15%, 10% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 15%);
-        }
-        /* Estilos personalizados para la barra de desplazamiento */
-        ::-webkit-scrollbar {
-          width: 12px;
-        }
-        ::-webkit-scrollbar-track {
-          background: black;
-        }
-        ::-webkit-scrollbar-thumb {
-          background-color: orange;
-          border: none;
-        }
-        ::-webkit-scrollbar-button {
-          background-color: orange;
-          border: none;
-        }
-      `}</style>
+      <div className="w-full max-w-5xl mx-auto">
+        <img
+          src="/bg-af.gif"
+          alt="background animation"
+          className="w-full h-auto"
+        />
+      </div>
     </div>
   );
-
 };
 
 export default App;
+
+<style>{`
+  .clip-folder {
+    clip-path: polygon(0% 15%, 10% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 15%);
+  }
+  /* Estilos personalizados para la barra de desplazamiento */
+  ::-webkit-scrollbar {
+    width: 12px;
+  }
+  ::-webkit-scrollbar-track {
+    background: black;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: #ff6600; /* Naranja de los títulos */
+    border: none;
+  }
+  ::-webkit-scrollbar-button {
+    background-color: #ff6600; /* Naranja de los títulos */
+    border: none;
+  }
+  /* Habilitar scrollbar en dispositivos móviles */
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: #ff6600 black;
+  }
+  body::-webkit-scrollbar {
+    display: block;
+  }
+`}</style>
 
 
 
