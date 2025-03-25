@@ -15,7 +15,7 @@ const TypingEffect = ({ text }) => {
       } else {
         clearInterval(typingInterval);
       }
-    }, 100);
+    }, 50); // Velocidad aumentada
 
     const cursorBlinkInterval = setInterval(() => {
       setCursorVisible((prev) => !prev);
@@ -28,12 +28,19 @@ const TypingEffect = ({ text }) => {
   }, [text]);
 
   return (
-    <span className="hacker-text">
-      {displayedText}
-      <span className={`cursor ${cursorVisible ? "visible" : "invisible"}`}>
-        █
-      </span>
-    </span>
+    <div className="typing-container">
+      {displayedText.split("\n").map((line, idx) => (
+        <span key={idx}>
+          {line}
+          <br />
+        </span>
+      ))}
+      {displayedText.length < text.length && (
+        <span className={`cursor ${cursorVisible ? "visible" : "invisible"}`}>
+          █
+        </span>
+      )}
+    </div>
   );
 };
 
@@ -145,7 +152,7 @@ const App = () => {
         <section className="my-24">
           <div className="px-4 text-justify w-full">
             <p className="mb-10 text-sm">
-              <TypingEffect text="I'm a multimedia artist based in Colombia. My work is rooted in personal experiences, concept, and graphics. I've created immersive visuals for international airports and museums using large-format LED displays. Passionate about merging code, sound, and emotion into futuristic art pieces." />
+              <TypingEffect text={`I'm a multimedia artist based in Colombia. My work is rooted in personal experiences, concept, and graphics.\nI've created immersive visuals for international airports and museums using large-format LED displays.\nPassionate about merging code, sound, and emotion into futuristic art pieces.`} />
             </p>
           </div>
         </section>
@@ -244,7 +251,7 @@ const App = () => {
           <div className="flex flex-col px-4">
             <div className="text-justify max-w-full">
               <p className="mb-[50px] text-sm">
-                <TypingEffect text="Hire visuals? Ask weird questions? Let's collaborate or just say hi!" />
+                <TypingEffect text={`Hire visuals? Ask weird questions?\nLet's collaborate or just say hi!`} />
               </p>
             </div>
             <div className="flex flex-row items-start justify-end gap-4">
@@ -312,27 +319,57 @@ const App = () => {
           background: black;
         }
         ::-webkit-scrollbar-thumb {
-          background-color: orange;
+          background-color: #ff6600; /* Naranja de los títulos */
           border: none;
         }
         ::-webkit-scrollbar-button {
-          background-color: orange;
+          background-color: #ff6600; /* Naranja de los títulos */
           border: none;
+        }
+        /* Habilitar scrollbar en dispositivos móviles */
+        html {
+          scrollbar-width: thin;
+          scrollbar-color: #ff6600 black;
+        }
+        body::-webkit-scrollbar {
+          display: block;
         }
         /* Estilo del puntero */
         body {
-          cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 32 32"><circle cx="16" cy="16" r="15" fill="orange" stroke="orange" stroke-width="2"/><circle cx="16" cy="16" r="5" fill="black"/></svg>') 8 8, auto;
+          cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 32 32"><circle cx="16" cy="16" r="15" fill="#ff6600" stroke="#ff6600" stroke-width="2"/><circle cx="16" cy="16" r="5" fill="black"/></svg>') 8 8, auto;
         }
-        /* Estilo del texto hacker */
-        .hacker-text {
+        /* Contenedor del texto tipeado */
+        .typing-container {
           font-family: monospace;
-          white-space: pre;
-          display: inline-block;
+          white-space: pre-wrap;
+          display: block;
+          background-color: rgba(0, 0, 0, 0.8);
+          color: #ff6600; /* Naranja de los títulos */
+          padding: 16px; /* Márgenes iguales en todos los lados */
+          border: 2px solid #ff6600; /* Naranja de los títulos */
+          border-radius: 8px;
+          max-width: 100%;
+          max-height: 200px;
+          overflow: hidden;
+          margin: 0 auto;
+          box-sizing: border-box;
+        }
+        @media (min-width: 640px) {
+          .typing-container {
+            max-width: 80%;
+            max-height: 300px;
+          }
+        }
+        @media (min-width: 1024px) {
+          .typing-container {
+            max-width: 60%;
+            max-height: 400px;
+          }
         }
         .cursor {
           display: inline-block;
           width: 1ch;
-          background-color: orange;
+          background-color: #ff6600; /* Naranja de los títulos */
         }
         .cursor.invisible {
           background-color: transparent;
