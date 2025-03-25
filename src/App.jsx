@@ -9,11 +9,31 @@ const App = () => {
 
   const projects = [
     null,
-    { title: "El Dorado Airport 360 LED", id: "project2" },
-    { title: "Visuals for BMTH Happy Song Live Show", id: "project3" },
-    { title: "Molas full 360° LED Screens", id: "project4" },
-    { title: "No Jardín", id: "project5" },
-    { title: "CyberDolls", id: "project6" },
+    {
+      title: "El Dorado Airport 360 LED",
+      id: "project2",
+      videoUrl: "https://www.youtube.com/embed/Nj_HoMbZlr8",
+    },
+    {
+      title: "Visuals for BMTH Happy Song Live Show",
+      id: "project3",
+      videoUrl: "https://www.youtube.com/embed/YOcFZgVmw0g",
+    },
+    {
+      title: "Molas full 360° LED Screens",
+      id: "project4",
+      videoUrl: "https://www.youtube.com/embed/nr8RBAF7zN4",
+    },
+    {
+      title: "No Jardín",
+      id: "project5",
+      videoUrl: "https://www.youtube.com/embed/U-ZVmD3W4wI",
+    },
+    {
+      title: "CyberDolls",
+      id: "project6",
+      videoUrl: "https://www.youtube.com/embed/ICmpu_Ul77Y",
+    },
   ];
 
   const wrapWords = (text) => {
@@ -31,7 +51,9 @@ const App = () => {
     <motion.div
       id={id}
       className={`w-full ${
-        bg ? "bg-orange-500 text-black" : "bg-black hover:bg-orange-500 hover:text-black"
+        bg
+          ? "bg-orange-500 text-black"
+          : "bg-black hover:bg-orange-500 hover:text-black"
       } py-2 mb-0 text-4xl md:text-5xl font-sans tracking-widest transition-colors duration-300 font-black`}
       style={{ transform: id === "contact" ? "translateY(-60px)" : "none" }}
     >
@@ -42,12 +64,12 @@ const App = () => {
   );
 
   return (
-    <div className="min-h-screen bg-black text-orange-500 font-mono px-0 py-0 relative">
+    <div className="min-h-screen bg-black text-orange-500 font-mono px-2 py-0 relative">
       {/* Cabecera */}
       <div className="flex justify-center">
         <div className="w-full max-w-5xl border border-orange-500">
-          <div className="flex flex-row items-center justify-between">
-            <div className="bg-orange-500 text-black px-4 py-3 text-xl font-bold w-full h-12 flex items-center">
+          <div className="flex flex-col sm:flex-row items-center justify-between">
+            <div className="bg-orange-500 text-black px-4 py-3 text-lg sm:text-xl font-bold w-full h-12 flex items-center">
               Zero // Andrés Martínez
             </div>
             <div className="flex flex-row flex-wrap gap-0 w-full h-12">
@@ -57,13 +79,17 @@ const App = () => {
                   onMouseEnter={() => setHoveredButton(index)}
                   onMouseLeave={() => setHoveredButton(null)}
                   onClick={() => {
-                    const section = document.getElementById(btn.toLowerCase().replace(/ /g, "-"));
+                    const section = document.getElementById(
+                      btn.toLowerCase().replace(/ /g, "-")
+                    );
                     if (section) {
                       section.scrollIntoView({ behavior: "smooth" });
                     }
                   }}
-                  className={`flex-1 px-4 py-2 bg-black h-12 w-full ${
-                    hoveredButton === index ? "bg-orange-500 text-black" : "text-orange-500"
+                  className={`flex-1 px-2 sm:px-4 py-2 bg-black h-12 w-full ${
+                    hoveredButton === index
+                      ? "bg-orange-500 text-black"
+                      : "text-orange-500"
                   }`}
                   style={{ border: "none" }}
                 >
@@ -76,7 +102,7 @@ const App = () => {
       </div>
 
       {/* Contenido principal */}
-      <div className="max-w-5xl mx-auto px-4 py-12">
+      <div className="max-w-5xl mx-auto px-2 sm:px-4 py-12">
         <HoverTitle text="ABOUT ME" id="about-me" />
         <section className="my-24">
           <div className="px-4 text-justify w-full">
@@ -93,15 +119,27 @@ const App = () => {
         </div>
 
         <HoverTitle text="PROJECTS" bg={true} id="projects" />
-        <section className="bg-orange-500 text-black px-0 py-10 flex flex-col justify-end relative">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6 items-end relative" style={{ maxWidth: "90%", margin: "0 auto" }}>
+        <section className="bg-orange-500 text-black px-2 sm:px-6 py-10 flex flex-col justify-end relative">
+          <div
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 p-4 sm:p-6 items-end relative"
+            style={{ maxWidth: "90%", margin: "0 auto" }}
+          >
             {projects.map((project, index) =>
               project ? (
                 <button
                   key={index}
-                  onClick={() => setExpandedProject(expandedProject === project.id ? null : project.id)}
-                  className="relative px-6 pt-6 pb-16 bg-black text-orange-500 hover:bg-orange-500 hover:text-black transition-colors shadow-md clip-folder flex items-start"
-                  style={{ height: "120px", border: "2px solid black", width: "305px" }}
+                  onClick={() =>
+                    setExpandedProject(
+                      expandedProject === project.id ? null : project.id
+                    )
+                  }
+                  className="relative px-4 sm:px-6 pt-6 pb-16 bg-black text-orange-500 hover:bg-orange-500 hover:text-black transition-colors shadow-md clip-folder flex items-start"
+                  style={{
+                    height: "100px",
+                    border: "2px solid black",
+                    width: "100%",
+                    maxWidth: "280px",
+                  }}
                 >
                   {project.title}
                 </button>
@@ -112,52 +150,83 @@ const App = () => {
           </div>
         </section>
 
-        {projects.map((project) =>
-          project && expandedProject === project.id ? (
-            <section key={project.id} className="text-orange-500 bg-black px-4 py-8 max-w-5xl mx-auto">
-              <HoverTitle text={project.title} />
-              <div className="py-4 text-sm">
-                <p className="mb-4">Details and description of the project: {project.title}</p>
-                <img src="/placeholder.png" alt="Placeholder" className="w-full mb-4" />
-                <iframe
-  width="100%"
-  height="315"
-  src="https://www.youtube.com/embedNj_HoMbZlr8"
-  title="YouTube video player"
-  frameBorder="0"
-  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-  allowFullScreen
-  className="w-full"
-/>
-                
-              </div>
-            </section>
-          ) : null
+        {/* Secciones de proyectos expandidos */}
+        {projects.map(
+          (project) =>
+            project &&
+            expandedProject === project.id && (
+              <section
+                key={project.id}
+                className="text-orange-500 bg-black px-4 py-8 max-w-5xl mx-auto"
+              >
+                <HoverTitle text={project.title} />
+                <div className="py-4 text-sm">
+                  <p className="mb-4">
+                    Details and description of the project: {project.title}
+                  </p>
+                  <img
+                    src="/placeholder.png"
+                    alt="Placeholder"
+                    className="w-full mb-4"
+                  />
+                  {project.videoUrl && (
+                    <iframe
+                      width="100%"
+                      height="315"
+                      src={`${project.videoUrl}?rel=0&autoplay=0`}
+                      title={`${project.title} video`}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="w-full"
+                    />
+                  )}
+                </div>
+              </section>
+            )
         )}
 
         <div className="mt-24"></div>
         <HoverTitle id="contact" text="CONTACT" />
-        <section id="contact" className="mt-[-10px] mb-0">
-          <div className="flex flex-col px-4">
+        <section id="contact" className="mt-[-10px] mb-0 px-2 sm:px-4">
+          <div className="flex flex-col">
             <div className="text-justify max-w-full">
-              <p className="mb-[50px] text-sm">
-                {wrapWords("Hire visuals? Ask weird questions? Let's collaborate or just say hi!")}
+              <p className="mb-[30px] sm:mb-[50px] text-sm">
+                {wrapWords(
+                  "Hire visuals? Ask weird questions? Let's collaborate or just say hi!"
+                )}
               </p>
             </div>
-            <div className="flex flex-row justify-start gap-4 flex-wrap">
-              {[                
-                { label: "MAIL", href: "mailto:johhannmartinez@hotmail.com" },
-                { label: "INSTAGRAM", href: "https://instagram.com/punk_bit" },
-                { label: "LINKEDIN", href: "https://www.linkedin.com/in/andrés-martínez02" },
-                { label: "YOUTUBE", href: "https://www.youtube.com/@ANdroIDGraphics00" }
+            <div className="flex flex-col sm:flex-row justify-start gap-4 flex-wrap">
+              {[
+                {
+                  label: "MAIL",
+                  href: "mailto:johhannmartinez@hotmail.com",
+                },
+                {
+                  label: "INSTAGRAM",
+                  href: "https://instagram.com/punk_bit",
+                },
+                {
+                  label: "BEHANCE",
+                  href: "https://www.behance.net/johhannmartnez",
+                },
+                {
+                  label: "YOUTUBE",
+                  href: "https://www.youtube.com/@ANdroIDGraphics00",
+                },
               ].map(({ label, href }, idx) => (
                 <a
                   key={idx}
                   href={href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="py-3 px-4 text-sm bg-black hover:bg-orange-500 text-orange-500 hover:text-black transition-colors text-left text-left"
-                  style={{ minWidth: "200px", maxWidth: "200px" }}
+                  className="py-3 px-4 text-sm bg-black hover:bg-orange-500 text-orange-500 hover:text-black transition-colors text-left"
+                  style={{
+                    minWidth: "100%",
+                    maxWidth: "100%",
+                    sm: { minWidth: "200px", maxWidth: "200px" },
+                  }}
                 >
                   {label}
                 </a>
@@ -168,7 +237,11 @@ const App = () => {
       </div>
 
       {/* Imagen inferior */}
-      <img src="/bg-af.gif" alt="background animation" className="w-full mt-0 max-w-5xl mx-auto" />
+      <img
+        src="/bg-af.gif"
+        alt="background animation"
+        className="w-full mt-0 max-w-5xl mx-auto"
+      />
 
       <style>{`
         .clip-folder {
@@ -177,9 +250,62 @@ const App = () => {
       `}</style>
     </div>
   );
+
 };
 
 export default App;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
