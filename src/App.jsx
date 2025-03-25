@@ -1,6 +1,42 @@
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
+// Componente para el efecto de tipeo
+const TypingEffect = ({ text }) => {
+  const [displayedText, setDisplayedText] = useState("");
+  const [cursorVisible, setCursorVisible] = useState(true);
+
+  useEffect(() => {
+    let index = 0;
+    const typingInterval = setInterval(() => {
+      if (index < text.length) {
+        setDisplayedText((prev) => prev + text[index]);
+        index++;
+      } else {
+        clearInterval(typingInterval);
+      }
+    }, 100);
+
+    const cursorBlinkInterval = setInterval(() => {
+      setCursorVisible((prev) => !prev);
+    }, 500);
+
+    return () => {
+      clearInterval(typingInterval);
+      clearInterval(cursorBlinkInterval);
+    };
+  }, [text]);
+
+  return (
+    <span className="hacker-text">
+      {displayedText}
+      <span className={`cursor ${cursorVisible ? "visible" : "invisible"}`}>
+        █
+      </span>
+    </span>
+  );
+};
+
 const App = () => {
   const [hoveredButton, setHoveredButton] = useState(null);
   const [expandedProject, setExpandedProject] = useState(null);
@@ -109,9 +145,7 @@ const App = () => {
         <section className="my-24">
           <div className="px-4 text-justify w-full">
             <p className="mb-10 text-sm">
-              {wrapWords(
-                "I'm a multimedia artist based in Colombia. My work is rooted in personal experiences, concept, and graphics. I've created immersive visuals for international airports and museums using large-format LED displays. Passionate about merging code, sound, and emotion into futuristic art pieces."
-              )}
+              <TypingEffect text="I'm a multimedia artist based in Colombia. My work is rooted in personal experiences, concept, and graphics. I've created immersive visuals for international airports and museums using large-format LED displays. Passionate about merging code, sound, and emotion into futuristic art pieces." />
             </p>
           </div>
         </section>
@@ -210,9 +244,7 @@ const App = () => {
           <div className="flex flex-col px-4">
             <div className="text-justify max-w-full">
               <p className="mb-[50px] text-sm">
-                {wrapWords(
-                  "Hire visuals? Ask weird questions? Let's collaborate or just say hi!"
-                )}
+                <TypingEffect text="Hire visuals? Ask weird questions? Let's collaborate or just say hi!" />
               </p>
             </div>
             <div className="flex flex-row items-start justify-end gap-4">
@@ -290,6 +322,20 @@ const App = () => {
         /* Estilo del puntero */
         body {
           cursor: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 32 32"><circle cx="16" cy="16" r="15" fill="orange" stroke="orange" stroke-width="2"/><circle cx="16" cy="16" r="5" fill="black"/></svg>') 8 8, auto;
+        }
+        /* Estilo del texto hacker */
+        .hacker-text {
+          font-family: monospace;
+          white-space: pre;
+          display: inline-block;
+        }
+        .cursor {
+          display: inline-block;
+          width: 1ch;
+          background-color: orange;
+        }
+        .cursor.invisible {
+          background-color: transparent;
         }
       `}</style>
     </div>
