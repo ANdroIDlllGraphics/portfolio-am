@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 // Componente para el efecto de tipeo
 const TypingEffect = ({ text }) => {
   const [displayedText, setDisplayedText] = useState("");
-  const [cursorVisible, setCursorVisible] = useState(true);
 
   useEffect(() => {
     let index = 0;
@@ -17,13 +16,8 @@ const TypingEffect = ({ text }) => {
       }
     }, 50); // Velocidad aumentada
 
-    const cursorBlinkInterval = setInterval(() => {
-      setCursorVisible((prev) => !prev);
-    }, 500);
-
     return () => {
       clearInterval(typingInterval);
-      clearInterval(cursorBlinkInterval);
     };
   }, [text]);
 
@@ -35,11 +29,6 @@ const TypingEffect = ({ text }) => {
           <br />
         </span>
       ))}
-      {displayedText.length < text.length && (
-        <span className={`cursor ${cursorVisible ? "visible" : "invisible"}`}>
-          █
-        </span>
-      )}
     </div>
   );
 };
@@ -350,7 +339,7 @@ const App = () => {
           border-radius: 8px;
           max-width: 100%;
           max-height: 200px;
-          overflow: hidden;
+          overflow-y: auto; /* Permitir desplazamiento vertical */
           margin: 0 auto;
           box-sizing: border-box;
         }
@@ -365,14 +354,6 @@ const App = () => {
             max-width: 60%;
             max-height: 400px;
           }
-        }
-        .cursor {
-          display: inline-block;
-          width: 1ch;
-          background-color: #ff6600; /* Naranja de los títulos */
-        }
-        .cursor.invisible {
-          background-color: transparent;
         }
       `}</style>
     </div>
