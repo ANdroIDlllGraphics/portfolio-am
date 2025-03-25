@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 // Componente para el efecto de tipeo
 const TypingEffect = ({ text }) => {
   const [displayedText, setDisplayedText] = useState("");
+  const [cursorVisible, setCursorVisible] = useState(true);
 
   useEffect(() => {
     let index = 0;
@@ -16,8 +17,13 @@ const TypingEffect = ({ text }) => {
       }
     }, 50); // Velocidad aumentada
 
+    const cursorBlinkInterval = setInterval(() => {
+      setCursorVisible((prev) => !prev);
+    }, 500);
+
     return () => {
       clearInterval(typingInterval);
+      clearInterval(cursorBlinkInterval);
     };
   }, [text]);
 
@@ -29,6 +35,11 @@ const TypingEffect = ({ text }) => {
           <br />
         </span>
       ))}
+      {displayedText.length < text.length && (
+        <span className={`cursor ${cursorVisible ? "visible" : "invisible"}`}>
+          █
+        </span>
+      )}
     </div>
   );
 };
@@ -37,7 +48,7 @@ const App = () => {
   const [hoveredButton, setHoveredButton] = useState(null);
   const [expandedProject, setExpandedProject] = useState(null);
 
-  const buttons = ["Home", "About Me", "Projects", "Contact"];
+  const buttons = ["Home", "System", "Projects", "Contact"]; // Cambia "About Me" por "System"
 
   const projects = [
     null,
@@ -74,7 +85,7 @@ const App = () => {
     return text.split(" ").map((word, index) => (
       <span
         key={index}
-        className="inline-block px-1 py-0.5 mx-0.5 my-0.5 text-sm transition duration-300 hover:bg-orange-500 hover:text-black"
+        className="inline-block px-1 py-0.5 mx-0.5 my-0.5 text-sm transition duration-300 bg-orange-500 text-black hover:bg-black hover:text-orange-500"
       >
         {word}
       </span>
@@ -89,7 +100,9 @@ const App = () => {
           ? "bg-orange-500 text-black"
           : "bg-black hover:bg-orange-500 hover:text-black"
       } py-2 mb-0 text-4xl md:text-5xl font-sans tracking-widest transition-colors duration-300 font-black`}
-      style={{ transform: id === "contact" ? "translateY(-60px)" : "none" }}
+      style={{
+        transform: id === "contact" ? "translateY(-60px)" : "translateY(-30px)", // Sube el recuadro responsivo
+      }}
     >
       <div className="max-w-5xl mx-auto px-4 font-mono uppercase h-12 flex items-center text-xl font-bold">
         {text}
@@ -104,7 +117,7 @@ const App = () => {
         <div className="w-full max-w-5xl border border-orange-500">
           <div className="flex flex-row items-center justify-between">
             <div className="bg-orange-500 text-black px-4 py-3 text-xl font-bold w-full h-12 flex items-center font-sans tracking-widest uppercase">
-              Zero // Andrés Martínez
+              punk_bit
             </div>
             <div className="flex flex-row flex-wrap gap-0 w-full h-12">
               {buttons.map((btn, index) => (
@@ -139,10 +152,19 @@ const App = () => {
       <div className="max-w-5xl mx-auto px-4 py-12">
         <HoverTitle text="ABOUT ME" id="about-me" />
         <section className="my-24">
-          <div className="px-4 text-justify w-full">
+          <div className="px-4 text-justify w-full relative">
             <p className="mb-10 text-sm">
               <TypingEffect text={`I'm a multimedia artist based in Colombia. My work is rooted in personal experiences, concept, and graphics.\nI've created immersive visuals for international airports and museums using large-format LED displays.\nPassionate about merging code, sound, and emotion into futuristic art pieces.`} />
             </p>
+            {/* Botones debajo del recuadro */}
+            <div className="absolute bottom-[-60px] right- 0flex gap-2">
+              <button className="px-4 py-2 text-sm bg-black text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-black transition-colors">
+                Cancel
+              </button>
+              <button className="px-4 py-2 text-sm bg-orange-500 text-black border border-orange-500 hover:bg-black hover:text-orange-500 transition-colors">
+                Accept
+              </button>
+            </div>
           </div>
         </section>
 
@@ -334,26 +356,32 @@ const App = () => {
           display: block;
           background-color: rgba(0, 0, 0, 0.8);
           color: #ff6600; /* Naranja de los títulos */
-          padding: 16px; /* Márgenes iguales en todos los lados */
+          padding: 16px;
           border: 2px solid #ff6600; /* Naranja de los títulos */
           border-radius: 8px;
           max-width: 100%;
-          max-height: 200px;
-          overflow-y: auto; /* Permitir desplazamiento vertical */
+          max-height: auto; /* Ajusta el tamaño para evitar scroll */
+          overflow: hidden; /* Elimina la barra de desplazamiento */
           margin: 0 auto;
           box-sizing: border-box;
         }
         @media (min-width: 640px) {
           .typing-container {
             max-width: 80%;
-            max-height: 300px;
           }
         }
         @media (min-width: 1024px) {
           .typing-container {
             max-width: 60%;
-            max-height: 400px;
           }
+        }
+        .cursor {
+          display: inline-block;
+          width: 1ch;
+          background-color: #ff6600; /* Naranja de los títulos */
+        }
+        .cursor.invisible {
+          background-color: transparent;
         }
       `}</style>
     </div>
