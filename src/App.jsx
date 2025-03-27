@@ -120,224 +120,219 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-black text-orange-500 font-mono px-0 py-0 relative">
-      {/* Cabecera */}
-      <div className="flex justify-center">
-        <div className="w-full max-w-5xl border border-orange-500">
-          <div className="flex flex-row items-center justify-between">
-            <div className="bg-orange-500 text-black px-4 py-3 text-xl font-bold w-full h-12 flex items-center font-sans tracking-widest uppercase">
-              punk_bit
+      {/* Contenedor principal con ancho limitado */}
+      <div className="max-w-5xl mx-auto px-4">
+        {/* Cabecera */}
+        <div className="flex justify-center">
+          <div className="w-full border border-orange-500">
+            <div className="flex flex-row items-center justify-between">
+              <div className="bg-orange-500 text-black px-4 py-3 text-xl font-bold w-full h-12 flex items-center font-sans tracking-widest uppercase">
+                punk_bit
+              </div>
+              <div className="flex flex-row flex-wrap gap-0 w-full h-12">
+                {buttons.map((btn, index) => (
+                  <motion.button
+                    key={btn}
+                    onMouseEnter={() => setHoveredButton(index)}
+                    onMouseLeave={() => setHoveredButton(null)}
+                    onClick={() => {
+                      if (btn === "System") {
+                        navigateToProjects(); // Redirige a "Projects"
+                      } else {
+                        const section = document.getElementById(
+                          btn.toLowerCase().replace(/ /g, "-")
+                        );
+                        if (section) {
+                          section.scrollIntoView({ behavior: "smooth" });
+                        }
+                      }
+                    }}
+                    className={`flex-1 px-4 py-2 bg-black h-12 w-full text-sm ${
+                      hoveredButton === index
+                        ? "bg-orange-500 text-black"
+                        : "text-orange-500"
+                    }`}
+                    style={{ border: "none" }}
+                  >
+                    {btn}
+                  </motion.button>
+                ))}
+              </div>
             </div>
-            <div className="flex flex-row flex-wrap gap-0 w-full h-12">
-              {buttons.map((btn, index) => (
-                <motion.button
-                  key={btn}
-                  onMouseEnter={() => setHoveredButton(index)}
-                  onMouseLeave={() => setHoveredButton(null)}
+          </div>
+        </div>
+
+        {/* GIF debajo del menú inicial */}
+        <div className="w-full">
+          <img src="/spirals.gif" alt="About Me GIF" className="w-full h-auto" />
+        </div>
+
+        {/* Sección "About Me" */}
+        <HoverTitle text="ABOUT ME" id="about-me" />
+        <section className="my-0">
+          <div className="px-4 text-justify w-full relative">
+            <p className="mb-10 text-sm">
+              <TypingEffect text={`I'm a multimedia artist based in Colombia. My work is rooted in personal experiences, concept, and graphics.\nI've created immersive visuals for international airports and museums using large-format LED displays.\nPassionate about merging code, sound, and emotion into futuristic art pieces.`} />
+            </p>
+            {/* Botones dentro del cuadro de texto */}
+            <div className="flex justify-end gap-2 mt-4">
+              <button className="px-4 py-2 text-sm bg-black text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-black transition-colors">
+                Cancel
+              </button>
+              <button className="px-4 py-2 text-sm bg-orange-500 text-black border border-orange-500 hover:bg-black hover:text-orange-500 transition-colors">
+                Accept
+              </button>
+            </div>
+          </div>
+        </section>
+
+        {/* GIF debajo de "About Me" */}
+        <div className="w-full" style={{ marginTop: "40px" }}>
+          <img src="/blue.gif" alt="Projects GIF" className="w-full h-auto" />
+        </div>
+
+        {/* Sección "Projects" */}
+        <HoverTitle
+          text="PROJECTS"
+          id="projects"
+          bg={true}
+          style={{ transform: "translateY(5px)" }}
+        />
+        <section className="bg-orange-500 text-black px-0 py-10 flex flex-col justify-end relative" style={{ marginTop: "-10px" }}>
+          <div
+            className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6 items-end relative"
+            style={{ maxWidth: "100%", margin: "0 auto" }}
+          >
+            {projects.map((project, index) =>
+              project ? (
+                <button
+                  key={index}
                   onClick={() => {
-                    if (btn === "System") {
-                      navigateToProjects(); // Redirige a "Projects"
-                    } else {
-                      const section = document.getElementById(
-                        btn.toLowerCase().replace(/ /g, "-")
-                      );
+                    setExpandedProject(project.id);
+                    setTimeout(() => {
+                      const section = document.getElementById(project.id);
                       if (section) {
                         section.scrollIntoView({ behavior: "smooth" });
                       }
-                    }
+                    }, 100);
                   }}
-                  className={`flex-1 px-4 py-2 bg-black h-12 w-full text-sm ${
-                    hoveredButton === index
-                      ? "bg-orange-500 text-black"
-                      : "text-orange-500"
-                  }`}
-                  style={{ border: "none" }}
+                  className="relative px-6 pt-6 pb-16 bg-black text-orange-500 hover:bg-orange-500 hover:text-black transition-colors shadow-md clip-folder flex items-start"
+                  style={{
+                    height: "120px",
+                    border: "2px solid black",
+                    width: "305px",
+                    marginBottom: "20px",
+                  }}
                 >
-                  {btn}
-                </motion.button>
-              ))}
-            </div>
+                  {project.title}
+                </button>
+              ) : (
+                <div key={index}></div>
+              )
+            )}
           </div>
-        </div>
-      </div>
+        </section>
 
-      {/* GIF debajo del menú inicial */}
-      <div className="w-full">
-        <img src="/spirals.gif" alt="About Me GIF" className="w-full h-auto" />
-      </div>
-
-      {/* Sección "About Me" */}
-      <HoverTitle text="ABOUT ME" id="about-me" />
-      <section className="my-0"> {/* Elimina el margen superior */}
-        <div className="px-4 text-justify w-full relative">
-          <p className="mb-10 text-sm">
-            <TypingEffect text={`I'm a multimedia artist based in Colombia. My work is rooted in personal experiences, concept, and graphics.\nI've created immersive visuals for international airports and museums using large-format LED displays.\nPassionate about merging code, sound, and emotion into futuristic art pieces.`} />
-          </p>
-          {/* Botones dentro del cuadro de texto */}
-          <div className="flex justify-end gap-2 mt-4">
-            <button className="px-4 py-2 text-sm bg-black text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-black transition-colors">
-              Cancel
-            </button>
-            <button className="px-4 py-2 text-sm bg-orange-500 text-black border border-orange-500 hover:bg-black hover:text-orange-500 transition-colors">
-              Accept
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* GIF debajo de "About Me" */}
-      <div className="w-full" style={{ marginTop: "40px" }}> {/* Elimina el margen superior */}
-        <img src="/blue.gif" alt="Projects GIF" className="w-full h-auto" />
-      </div>
-
-      {/* Sección "Projects" */}
-      <HoverTitle
-        text="PROJECTS"
-        id="projects"
-        bg={true}
-        style={{ transform: "translateY(5px)" }} // Sube el título de "Projects" 10px
-      />
-      <section className="bg-orange-500 text-black px-0 py-10 flex flex-col justify-end relative" style={{ marginTop: "-10px" }}> {/* Sube la sección 10px */}
-        <div
-          className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6 items-end relative"
-          style={{ maxWidth: "90%", margin: "0 auto" }}
-        >
-          {projects.map((project, index) =>
-            project ? (
-              <button
-                key={index}
-                onClick={() => {
-                  setExpandedProject(project.id);
-                  setTimeout(() => {
-                    const section = document.getElementById(project.id);
-                    if (section) {
-                      section.scrollIntoView({ behavior: "smooth" });
-                    }
-                  }, 100);
-                }}
-                className="relative px-6 pt-6 pb-16 bg-black text-orange-500 hover:bg-orange-500 hover:text-black transition-colors shadow-md clip-folder flex items-start"
-                style={{
-                  height: "120px",
-                  border: "2px solid black",
-                  width: "305px",
-                  marginBottom: "20px",
-                }}
+        {/* Secciones de proyectos expandidos */}
+        {projects.map(
+          (project) =>
+            project &&
+            expandedProject === project.id && (
+              <section
+                key={project.id}
+                id={project.id}
+                className="text-orange-500 bg-black px-4 py-8 max-w-5xl mx-auto"
               >
-                {project.title}
-              </button>
-            ) : (
-              <div key={index}></div>
-            )
-          )}
-        </div>
-      </section>
-
-      {/* Secciones de proyectos expandidos */}
-      {projects.map(
-        (project) =>
-          project &&
-          expandedProject === project.id && (
-            <section
-              key={project.id}
-              id={project.id}
-              className="text-orange-500 bg-black px-4 py-8 max-w-5xl mx-auto"
-            >
-              <HoverTitle text={project.title} />
-              <div className="py-4 text-sm">
-                <p className="mb-4">
-                  Details and description of the project: {project.title}
-                </p>
-                <div className="flex flex-wrap justify-between gap-4 mb-4">
-                  <img
-                    src="/image1.png"
-                    alt={`${project.title} image 1`}
-                    className="w-full sm:w-[32%] h-auto"
-                  />
-                  <img
-                    src="/image2.png"
-                    alt={`${project.title} image 2`}
-                    className="w-full sm:w-[32%] h-auto"
-                  />
-                  <img
-                    src="/image3.png"
-                    alt={`${project.title} image 3`}
-                    className="w-full sm:w-[32%] h-auto"
-                  />
+                <HoverTitle text={project.title} />
+                <div className="py-4 text-sm">
+                  <p className="mb-4">
+                    Details and description of the project: {project.title}
+                  </p>
+                  <div className="flex flex-wrap justify-between gap-4 mb-4">
+                    <img
+                      src="/image1.png"
+                      alt={`${project.title} image 1`}
+                      className="w-full sm:w-[32%] h-auto"
+                    />
+                    <img
+                      src="/image2.png"
+                      alt={`${project.title} image 2`}
+                      className="w-full sm:w-[32%] h-auto"
+                    />
+                    <img
+                      src="/image3.png"
+                      alt={`${project.title} image 3`}
+                      className="w-full sm:w-[32%] h-auto"
+                    />
+                  </div>
+                  {project.videoUrl && (
+                    <iframe
+                      width="100%"
+                      height="315"
+                      src={`${project.videoUrl}?rel=0&autoplay=0`}
+                      title={`${project.title} video`}
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                      allowFullScreen
+                      className="w-full"
+                    />
+                  )}
                 </div>
-                {project.videoUrl && (
-                  <iframe
-                    width="100%"
-                    height="315"
-                    src={`${project.videoUrl}?rel=0&autoplay=0`}
-                    title={`${project.title} video`}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="w-full"
-                  />
-                )}
+              </section>
+            )
+        )}
+
+        {/* Sección "Contact" */}
+        <HoverTitle id="contact" text="CONTACT" bg={true} />
+        <section id="contact" className="mt-0 mb-0"> {/* Elimina el margen superior */}
+          <div className="flex flex-col px-4">
+            <div className="text-justify max-w-full">
+              <p className="mb-[50px] text-sm">
+                <TypingEffect text={`Hire visuals? \nLet's collaborate or just say hi!`} />
+              </p>
+              {/* Botones dentro del cuadro de texto */}
+              <div className="flex flex-col gap-2 mt-4">
+                {[
+                  {
+                    label: "MAIL",
+                    href: "mailto:johhannmartinez@hotmail.com",
+                  },
+                  {
+                    label: "INSTAGRAM",
+                    href: "https://instagram.com/punk_bit",
+                  },
+                  {
+                    label: "BEHANCE",
+                    href: "https://www.behance.net/johhannmartnez",
+                  },
+                  {
+                    label: "YOUTUBE",
+                    href: "https://www.youtube.com/@ANdroIDGraphics00",
+                  },
+                ].map(({ label, href }, idx) => (
+                  <a
+                    key={idx}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="py-2 px-4 text-sm bg-black hover:bg-orange-500 text-orange-500 hover:text-black transition-colors text-left"
+                    style={{ minWidth: "200px" }}
+                  >
+                    {label}
+                  </a>
+                ))}
               </div>
-            </section>
-          )
-      )}
-
-      {/* GIF debajo de "Projects" */}
-      <div className="w-full">
-        <img src="/faces.gif" alt="Contact GIF" className="w-full h-auto" />
-      </div>
-
-      {/* Sección "Contact" */}
-      <HoverTitle id="contact" text="CONTACT" bg={true} />
-      <section id="contact" className="mt-0 mb-0"> {/* Elimina el margen superior */}
-        <div className="flex flex-col px-4">
-          <div className="text-justify max-w-full">
-            <p className="mb-[50px] text-sm">
-              <TypingEffect text={`Hire visuals? \nLet's collaborate or just say hi!`} />
-            </p>
-            {/* Botones dentro del cuadro de texto */}
-            <div className="flex flex-col gap-2 mt-4">
-              {[
-                {
-                  label: "MAIL",
-                  href: "mailto:johhannmartinez@hotmail.com",
-                },
-                {
-                  label: "INSTAGRAM",
-                  href: "https://instagram.com/punk_bit",
-                },
-                {
-                  label: "BEHANCE",
-                  href: "https://www.behance.net/johhannmartnez",
-                },
-                {
-                  label: "YOUTUBE",
-                  href: "https://www.youtube.com/@ANdroIDGraphics00",
-                },
-              ].map(({ label, href }, idx) => (
-                <a
-                  key={idx}
-                  href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="py-2 px-4 text-sm bg-black hover:bg-orange-500 text-orange-500 hover:text-black transition-colors text-left"
-                  style={{ minWidth: "200px" }}
-                >
-                  {label}
-                </a>
-              ))}
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
-      <div className="mt-24"></div>
-
-      {/* Imagen inferior */}
+      {/* GIF inferior sin margen */}
       <img
         src="/bg-af.gif"
         alt="background animation"
-        className="w-full mt-0 max-w-5xl mx-auto"
+        className="w-full mt-0"
       />
-
       <style>{`
         .clip-folder {
           clip-path: polygon(0% 15%, 10% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 15%);
@@ -415,7 +410,6 @@ const App = () => {
 };
 
 export default App;
-
 
 
 
