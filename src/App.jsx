@@ -60,22 +60,22 @@ const App = () => {
     {
       title: "Visuals for BMTH Happy Song Live Show",
       id: "project3",
-      videoUrl: "https://www.youtube.com/embed/YOcFZgVmw0g",
+      videoUrl: "https://www.youtube.com/embed/_LTvnRwvf9c",
     },
     {
       title: "Molas full 360 LED Screens",
       id: "project4",
-      videoUrl: "https://www.youtube.com/embed/nr8RBAF7zN4",
+      videoUrl: "https://www.youtube.com/embed/1Psh961BjgY",
     },
     {
       title: "No Jardin",
       id: "project5",
-      videoUrl: "https://www.youtube.com/embed/U-ZVmD3W4wI",
+      videoUrl: "https://www.youtube.com/embed/Mh9U44Tam84",
     },
     {
       title: "CyberDolls",
       id: "project6",
-      videoUrl: "https://www.youtube.com/embed/ICmpu_Ul77Y",
+      videoUrl: "https://www.youtube.com/embed/14xWbF2yR_s",
     },
   ];
 
@@ -172,7 +172,12 @@ const App = () => {
         <section className="my-0">
           <div className="px-4 text-justify w-full relative">
             <p className="mb-10 text-sm">
-              <TypingEffect text={`I'm a multimedia artist based in Colombia. My work is rooted in personal experiences, concept, and graphics.\nI've created immersive visuals for international airports and museums using large-format LED displays.\nPassionate about merging code, sound, and emotion into futuristic art pieces.`} />
+              <TypingEffect text={`I'm Andrés Martínez, a multimedia artist from Bogotá, Colombia.
+               My work blends creative coding, generative animation, and visual storytelling to build graphic languages that push the boundaries of perception. I'm drawn to art as an interface — a way to hack the everyday and open portals to new aesthetic possibilities.
+
+I’ve been exploring formats ranging from live visuals and immersive projections to pieces developed with artificial intelligence and real-time audiovisual experimentation.
+
+Each piece is a drift, an experiment, and a visual manifesto of my time.`} />
             </p>
             {/* Botones dentro del cuadro de texto */}
             <div className="flex justify-end gap-2 mt-4">
@@ -265,11 +270,11 @@ const App = () => {
                       className="w-full sm:w-[32%] h-auto"
                     />
                   </div>
-                  {project.videoUrl && (
+                  {project.videoUrl && project.title !== "Beatriz González" && ( // Excluye "Beatriz González"
                     <iframe
                       width="100%"
                       height="315"
-                      src={`${project.videoUrl}?rel=0&autoplay=0`}
+                      src={`${project.videoUrl}?rel=0&autoplay=1`}
                       title={`${project.title} video`}
                       frameBorder="0"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -291,7 +296,7 @@ const App = () => {
                 <TypingEffect text={`Hire visuals? \nLet's collaborate or just say hi!`} />
               </p>
               {/* Botones dentro del cuadro de texto */}
-              <div className="flex flex-col gap-2 mt-4">
+              <div className="flex flex-col gap-2 mt-4 mb-6"> {/* Agrega margen inferior */}
                 {[
                   {
                     label: "MAIL",
@@ -374,7 +379,7 @@ const App = () => {
           font-family: monospace;
           white-space: pre-wrap;
           display: block;
-          background-color: rgb(14, 14, 14);
+          background-color: rgb(0, 0, 0);
           color: #ff6600; /* Naranja de los títulos */
           padding: 16px;
           border: 2px solid #ff6600; /* Naranja de los títulos */
