@@ -58,7 +58,7 @@ const App = () => {
       videoUrl: "https://www.youtube.com/embed/Nj_HoMbZlr8",
     },
     {
-      title: "Visuals for BMTH Happy Song Live Show",
+      title: "Visuals//BMTH Live Show",
       id: "project3",
       videoUrl: "https://www.youtube.com/embed/_LTvnRwvf9c",
     },
@@ -172,8 +172,7 @@ const App = () => {
         <section className="my-0">
           <div className="px-4 text-justify w-full relative">
             <p className="mb-10 text-sm">
-              <TypingEffect text={`
-I'm Andrés Martínez, a multimedia artist from Bogotá, Colombia. My work blends creative coding, generative animation, and visual storytelling to build graphic languages that push the boundaries of perception. I'm drawn to art as an interface — a way to hack the everyday and open portals to new aesthetic possibilities.
+              <TypingEffect text={`I'm Andrés Martínez, a multimedia artist from Bogotá, Colombia.              My work blends creative coding, generative animation, and visual storytelling to build graphic languages that push the boundaries of perception. I'm drawn to art as an interface — a way to hack the everyday and open portals to new aesthetic possibilities.
 
 I’ve been exploring formats ranging from live visuals and immersive projections to pieces developed with artificial intelligence and real-time audiovisual experimentation.
 
@@ -265,6 +264,69 @@ Each piece is a drift, an experiment, and a visual manifesto of my time.`} />
                       <div className="flex justify-center gap-4 mb-4">
                         <img src="/BG_001.gif" alt="Background Animation 1" className="w-[48%] h-auto" />
                         <img src="/BG_002.gif" alt="Background Animation 2" className="w-[48%] h-auto" />
+                      </div>
+                    </>
+                  ) : project.title === "Visuals//BMTH Live Show" ? (
+                    <>
+                      <p className="mb-4 font-bold text-lg">
+                      Visuals for Happy Song - BMTH Live Show
+                      </p>
+                      <p className="mb-4">
+                        This project involved creating stunning live visuals for BMTH's performance of "Happy Song." The visuals were designed to amplify the energy of the performance and immerse the audience in a dynamic audiovisual experience.
+                      </p>
+                      /* GIFs en fila */
+                      <div className="flex justify-center gap-4 mb-4">
+                        <img src="/BMTH_001.gif" alt="BMTH Animation 1" className="w-[32%] h-auto" />
+                        <img src="/BMTH_002.gif" alt="BMTH Animation 2" className="w-[32%] h-auto" />
+                        <img src="/BMTH_003.gif" alt="BMTH Animation 3" className="w-[32%] h-auto" />
+                      </div>
+                      </>
+                      ) : project.title === "No Jardin" ? (
+                      <>
+                        <p className="mb-4 font-bold text-lg">No Jardin</p>
+                        <p className="mb-4">
+                          This is no longer my home — and it’s no longer yours either. I’m left without margaritas, and you without roses.<br />
+                          This project explores the concept of “No Jardín” through a series of visuals that challenge traditional notions of space and nature. The animations bring a unique perspective to the idea of gardens in a digital context.
+                        </p>
+                        {/* GIFs en fila */}
+                      <div className="flex justify-center gap-4 mb-4">
+                        <img src="/jardin_001.gif" alt="No Jardin Animation 1" className="w-[32%] h-auto" />
+                        <img src="/jardin_002.gif" alt="No Jardin Animation 2" className="w-[32%] h-auto" />
+                        <img src="/jardin_003.gif" alt="No Jardin Animation 3" className="w-[32%] h-auto" />
+                      </div>
+                    </>
+                  ) : project.title === "CyberDolls" ? (
+                    <>
+                      <p className="mb-4 font-bold text-lg">
+                        CyberDolls
+                      </p>
+                      <p className="mb-4">
+                      Cyberdolls is a real-time visual project that merges image processing and artificial intelligence. Several anime-style figures were generated using AI, then altered through effects like dithering, displacement, and layered pixel imagery.
+
+The result is a fragmented, glitch-driven aesthetic that explores the boundaries between digital identity, synthetic beauty, and visual distortion.
+                      </p>
+                      {/* GIFs en fila */}
+                      <div className="flex justify-center gap-4 mb-4">
+                        <img src="/CBRGRL_001.gif" alt="CyberDolls Animation 1" className="w-[32%] h-auto" />
+                        <img src="/CBRGRL_002.gif" alt="CyberDolls Animation 2" className="w-[32%] h-auto" />
+                        <img src="/CBRGRL_003.gif" alt="CyberDolls Animation 3" className="w-[32%] h-auto" />
+                      </div>
+                    </>
+                  ) : project.title === "Molas full 360 LED Screens" ? (
+                    <>
+                      <p className="mb-4 font-bold text-lg">
+                        Molas full 360 LED Screens
+                      </p>
+                      <p className="mb-4">
+                      This project showcases the vibrant and intricate designs of Molas art on a full 360-degree LED screen. The visuals celebrate the cultural heritage of the Guna people, blending traditional patterns with modern digital techniques.
+
+The exhibition features large LED columns displaying animated mola designs. It first appeared at El Dorado International Airport in Bogotá, Colombia, and later at Ezeiza International Airport in Buenos Aires, Argentina. This project brings Panama’s cultural heritage to a global audience, blending tradition with digital technology in high-traffic public spaces.
+ 
+                      </p>
+                      {/* GIF y imagen */}
+                      <div className="flex justify-center gap-4 mb-4">
+                        <img src="/molas_001.gif" alt="Molas Animation" className="w-[48%] h-auto" />
+                        <img src="/molas_img.png" alt="Molas Image" className="w-[48%] h-auto" />
                       </div>
                     </>
                   ) : (
