@@ -172,8 +172,8 @@ const App = () => {
         <section className="my-0">
           <div className="px-4 text-justify w-full relative">
             <p className="mb-10 text-sm">
-              <TypingEffect text={`I'm Andrés Martínez, a multimedia artist from Bogotá, Colombia.
-               My work blends creative coding, generative animation, and visual storytelling to build graphic languages that push the boundaries of perception. I'm drawn to art as an interface — a way to hack the everyday and open portals to new aesthetic possibilities.
+              <TypingEffect text={`
+I'm Andrés Martínez, a multimedia artist from Bogotá, Colombia. My work blends creative coding, generative animation, and visual storytelling to build graphic languages that push the boundaries of perception. I'm drawn to art as an interface — a way to hack the everyday and open portals to new aesthetic possibilities.
 
 I’ve been exploring formats ranging from live visuals and immersive projections to pieces developed with artificial intelligence and real-time audiovisual experimentation.
 
@@ -250,27 +250,30 @@ Each piece is a drift, an experiment, and a visual manifesto of my time.`} />
               >
                 <HoverTitle text={project.title} />
                 <div className="py-4 text-sm">
-                  <p className="mb-4">
-                    Details and description of the project: {project.title}
-                  </p>
-                  <div className="flex flex-wrap justify-between gap-4 mb-4">
-                    <img
-                      src="/image1.png"
-                      alt={`${project.title} image 1`}
-                      className="w-full sm:w-[32%] h-auto"
-                    />
-                    <img
-                      src="/image2.png"
-                      alt={`${project.title} image 2`}
-                      className="w-full sm:w-[32%] h-auto"
-                    />
-                    <img
-                      src="/image3.png"
-                      alt={`${project.title} image 3`}
-                      className="w-full sm:w-[32%] h-auto"
-                    />
-                  </div>
-                  {project.videoUrl && project.title !== "Beatriz González" && ( // Excluye "Beatriz González"
+                  {project.title === "El Dorado Airport 360 LED" ? (
+                    <>
+                      <p className="mb-4 font-bold text-lg">
+                        Tribute to Beatriz González
+                      </p>
+                      <p className="mb-4">
+                        To celebrate the 90th birthday of artist Beatriz González, six animated videos were created by reinterpreting some of her most iconic works using image processing and artificial intelligence. The animations expand elements of the original paintings and apply a digital “paint” effect, blending traditional techniques with modern digital tools.
+                      </p>
+                      <p className="mb-4">
+                        These looped animations were displayed on a large LED column at El Dorado International Airport in Bogotá, with support from the Banco de la República. The project brought Beatriz González’s legacy into a contemporary context, making her work visible to thousands of travelers every day.
+                      </p>
+                      {/* GIFs en fila */}
+                      <div className="flex justify-center gap-4 mb-4">
+                        <img src="/BG_001.gif" alt="Background Animation 1" className="w-[48%] h-auto" />
+                        <img src="/BG_002.gif" alt="Background Animation 2" className="w-[48%] h-auto" />
+                      </div>
+                    </>
+                  ) : (
+                    <p className="mb-4">
+                      Details and description of the project: {project.title}
+                    </p>
+                  )}
+                  
+                  {project.videoUrl && (
                     <iframe
                       width="100%"
                       height="315"
@@ -290,6 +293,9 @@ Each piece is a drift, an experiment, and a visual manifesto of my time.`} />
         {/* Sección "Contact" */}
         <HoverTitle id="contact" text="CONTACT" bg={true} />
         <section id="contact" className="mt-0 mb-0"> {/* Elimina el margen superior */}
+          <div className="w-full mb-4">
+            <img src="/faces.gif" alt="Contact GIF" className="w-full h-auto" /> {/* Imagen debajo del título "Contact" */}
+          </div>
           <div className="flex flex-col px-4">
             <div className="text-justify max-w-full">
               <p className="mb-[50px] text-sm">
