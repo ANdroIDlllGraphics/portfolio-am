@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
 // Componente para el efecto de tipeo
-const TypingEffect = ({ text }) => {
+const TypingEffect = ({ text, onComplete }) => { // Agrega onComplete como prop
   const [displayedText, setDisplayedText] = useState("");
   const [cursorVisible, setCursorVisible] = useState(true);
 
@@ -14,6 +14,7 @@ const TypingEffect = ({ text }) => {
         index++;
       } else {
         clearInterval(typingInterval);
+        if (onComplete) onComplete(); // Llama a onComplete cuando termine
       }
     }, 50); // Velocidad aumentada
 
@@ -25,7 +26,7 @@ const TypingEffect = ({ text }) => {
       clearInterval(typingInterval);
       clearInterval(cursorBlinkInterval);
     };
-  }, [text]);
+  }, [text, onComplete]);
 
   return (
     <div className="typing-container">
@@ -47,6 +48,7 @@ const TypingEffect = ({ text }) => {
 const App = () => {
   const [hoveredButton, setHoveredButton] = useState(null);
   const [expandedProject, setExpandedProject] = useState(null);
+  const [typingCompleted, setTypingCompleted] = useState(false);
 
   const buttons = ["System", "Contact"]; // Elimina "Home" y "Projects"
 
@@ -118,6 +120,14 @@ const App = () => {
     }
   };
 
+  const handleCompleteTyping = () => {
+    setTypingCompleted(true);
+  };
+
+  const completeTyping = () => {
+    setTypingCompleted(true);
+  };
+
   return (
     <div className="min-h-screen bg-black text-orange-500 font-mono px-0 py-0 relative">
       {/* Contenedor principal con ancho limitado */}
@@ -172,18 +182,27 @@ const App = () => {
         <section className="my-0">
           <div className="px-4 text-justify w-full relative">
             <p className="mb-10 text-sm">
-              <TypingEffect text={`I'm Andrés Martínez, a multimedia artist from Bogotá, Colombia.              My work blends creative coding, generative animation, and visual storytelling to build graphic languages that push the boundaries of perception. I'm drawn to art as an interface — a way to hack the everyday and open portals to new aesthetic possibilities.
+              <TypingEffect
+                text={`I'm Andrés Martínez, a multimedia artist from Bogotá, Colombia. My work blends creative coding, generative animation, and visual storytelling to build graphic languages that push the boundaries of perception. I'm drawn to art as an interface — a way to hack the everyday and open portals to new aesthetic possibilities.
 
 I’ve been exploring formats ranging from live visuals and immersive projections to pieces developed with artificial intelligence and real-time audiovisual experimentation.
 
-Each piece is a drift, an experiment, and a visual manifesto of my time.`} />
+Each piece is a drift, an experiment, and a visual manifesto of my time.`}
+                onComplete={handleCompleteTyping} // Llama a handleCompleteTyping al terminar
+              />
             </p>
             {/* Botones dentro del cuadro de texto */}
             <div className="flex justify-end gap-2 mt-4">
-              <button className="px-4 py-2 text-sm bg-black text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-black transition-colors">
+              <button
+                onClick={completeTyping} // Completa el tipeo al hacer clic
+                className="px-4 py-2 text-sm bg-black text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-black transition-colors"
+              >
                 Cancel
               </button>
-              <button className="px-4 py-2 text-sm bg-orange-500 text-black border border-orange-500 hover:bg-black hover:text-orange-500 transition-colors">
+              <button
+                onClick={completeTyping} // Completa el tipeo al hacer clic
+                className="px-4 py-2 text-sm bg-orange-500 text-black border border-orange-500 hover:bg-black hover:text-orange-500 transition-colors"
+              >
                 Accept
               </button>
             </div>
@@ -248,16 +267,16 @@ Each piece is a drift, an experiment, and a visual manifesto of my time.`} />
                 className="text-orange-500 bg-black px-4 py-8 max-w-5xl mx-auto"
               >
                 <HoverTitle text={project.title} />
-                <div className="py-4 text-sm">
+                <div className="py-8 text-base"> {/* Cambia text-sm a text-base */}
                   {project.title === "El Dorado Airport 360 LED" ? (
                     <>
                       <p className="mb-4 font-bold text-lg">
                         Tribute to Beatriz González
                       </p>
-                      <p className="mb-4">
+                      <p className="mb-8">
                         To celebrate the 90th birthday of artist Beatriz González, six animated videos were created by reinterpreting some of her most iconic works using image processing and artificial intelligence. The animations expand elements of the original paintings and apply a digital “paint” effect, blending traditional techniques with modern digital tools.
                       </p>
-                      <p className="mb-4">
+                      <p className="mb-8">
                         These looped animations were displayed on a large LED column at El Dorado International Airport in Bogotá, with support from the Banco de la República. The project brought Beatriz González’s legacy into a contemporary context, making her work visible to thousands of travelers every day.
                       </p>
                       {/* GIFs en fila */}
@@ -268,13 +287,13 @@ Each piece is a drift, an experiment, and a visual manifesto of my time.`} />
                     </>
                   ) : project.title === "Visuals//BMTH Live Show" ? (
                     <>
-                      <p className="mb-4 font-bold text-lg">
+                      <p className="mb-8 font-bold text-lg">
                       Visuals for Happy Song - BMTH Live Show
                       </p>
-                      <p className="mb-4">
+                      <p className="mb-8">
                         This project involved creating stunning live visuals for BMTH's performance of "Happy Song." The visuals were designed to amplify the energy of the performance and immerse the audience in a dynamic audiovisual experience.
                       </p>
-                      /* GIFs en fila */
+                      {/* GIFs en fila */}
                       <div className="flex justify-center gap-4 mb-4">
                         <img src="/BMTH_001.gif" alt="BMTH Animation 1" className="w-[32%] h-auto" />
                         <img src="/BMTH_002.gif" alt="BMTH Animation 2" className="w-[32%] h-auto" />
@@ -283,8 +302,8 @@ Each piece is a drift, an experiment, and a visual manifesto of my time.`} />
                       </>
                       ) : project.title === "No Jardin" ? (
                       <>
-                        <p className="mb-4 font-bold text-lg">No Jardin</p>
-                        <p className="mb-4">
+                        <p className="mb-8 font-bold text-lg">No Jardin</p>
+                        <p className="mb-8">
                           This is no longer my home — and it’s no longer yours either. I’m left without margaritas, and you without roses.<br />
                           This project explores the concept of “No Jardín” through a series of visuals that challenge traditional notions of space and nature. The animations bring a unique perspective to the idea of gardens in a digital context.
                         </p>
@@ -297,10 +316,10 @@ Each piece is a drift, an experiment, and a visual manifesto of my time.`} />
                     </>
                   ) : project.title === "CyberDolls" ? (
                     <>
-                      <p className="mb-4 font-bold text-lg">
+                      <p className="mb-8 font-bold text-lg">
                         CyberDolls
                       </p>
-                      <p className="mb-4">
+                      <p className="mb-8">
                       Cyberdolls is a real-time visual project that merges image processing and artificial intelligence. Several anime-style figures were generated using AI, then altered through effects like dithering, displacement, and layered pixel imagery.
 
 The result is a fragmented, glitch-driven aesthetic that explores the boundaries between digital identity, synthetic beauty, and visual distortion.
@@ -314,10 +333,10 @@ The result is a fragmented, glitch-driven aesthetic that explores the boundaries
                     </>
                   ) : project.title === "Molas full 360 LED Screens" ? (
                     <>
-                      <p className="mb-4 font-bold text-lg">
+                      <p className="mb-8 font-bold text-lg">
                         Molas full 360 LED Screens
                       </p>
-                      <p className="mb-4">
+                      <p className="mb-8">
                       This project showcases the vibrant and intricate designs of Molas art on a full 360-degree LED screen. The visuals celebrate the cultural heritage of the Guna people, blending traditional patterns with modern digital techniques.
 
 The exhibition features large LED columns displaying animated mola designs. It first appeared at El Dorado International Airport in Bogotá, Colombia, and later at Ezeiza International Airport in Buenos Aires, Argentina. This project brings Panama’s cultural heritage to a global audience, blending tradition with digital technology in high-traffic public spaces.
@@ -330,7 +349,7 @@ The exhibition features large LED columns displaying animated mola designs. It f
                       </div>
                     </>
                   ) : (
-                    <p className="mb-4">
+                    <p className="mb-8">
                       Details and description of the project: {project.title}
                     </p>
                   )}
@@ -355,8 +374,8 @@ The exhibition features large LED columns displaying animated mola designs. It f
         {/* Sección "Contact" */}
         <HoverTitle id="contact" text="CONTACT" bg={true} />
         <section id="contact" className="mt-0 mb-0"> {/* Elimina el margen superior */}
-          <div className="w-full mb-4">
-            <img src="/faces.gif" alt="Contact GIF" className="w-full h-auto" /> {/* Imagen debajo del título "Contact" */}
+          <div className="w-full mb-16" style={{ marginTop: "-80px" }}> {/* Sube faces.gif 40px */}
+            <img src="/faces.gif" alt="Contact GIF" className="w-full h-auto" />
           </div>
           <div className="flex flex-col px-4">
             <div className="text-justify max-w-full">
@@ -364,7 +383,7 @@ The exhibition features large LED columns displaying animated mola designs. It f
                 <TypingEffect text={`Hire visuals? \nLet's collaborate or just say hi!`} />
               </p>
               {/* Botones dentro del cuadro de texto */}
-              <div className="flex flex-col gap-2 mt-4 mb-6"> {/* Agrega margen inferior */}
+              <div className="flex flex-col gap-2 mt-8 mb-6"> {/* Agrega margen inferior */}
                 {[
                   {
                     label: "MAIL",
