@@ -277,7 +277,7 @@ Each piece is a drift, an experiment, and a visual manifesto of my time.`}
                         To celebrate the 90th birthday of artist Beatriz González, six animated videos were created by reinterpreting some of her most iconic works using image processing and artificial intelligence. The animations expand elements of the original paintings and apply a digital “paint” effect, blending traditional techniques with modern digital tools.
                       </p>
                       <p className="mb-8">
-                        These looped animations were displayed on a large LED column at El Dorado International Airport in Bogotá, with support from the Banco de la República. The project brought Beatriz González’s legacy into a contemporary context, making her work visible to thousands of travelers every day.
+                        These looped animations were displayed on a large LED column at El Dorado International Airport in Bogotá, with support from the Banco de la República and Volarte. The project brought Beatriz González’s legacy into a contemporary context, making her work visible to thousands of travelers every day.
                       </p>
                       {/* GIFs en fila */}
                       <div className="flex justify-center gap-4 mb-4">
@@ -291,7 +291,7 @@ Each piece is a drift, an experiment, and a visual manifesto of my time.`}
                       Visuals for Happy Song - BMTH Live Show
                       </p>
                       <p className="mb-8">
-                        This project involved creating stunning live visuals for BMTH's performance of "Happy Song." The visuals were designed to amplify the energy of the performance and immerse the audience in a dynamic audiovisual experience.
+                        This project involved creating stunning live visuals for BMTH's performance of "Happy Song." The visuals were designed to amplify the energy of the performance and a dynamic audiovisual experience.
                       </p>
                       {/* GIFs en fila */}
                       <div className="flex justify-center gap-4 mb-4">
