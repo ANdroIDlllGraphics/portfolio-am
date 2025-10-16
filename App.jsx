@@ -144,7 +144,7 @@ const App = () => {
       <section className="my-24">
         <div className="px-4 text-justify w-full border border-orange-500 p-4 max-w-5xl mx-auto">
           <p className="mb-10 text-sm">
-            <TypingEffect text={`I'm a multimedia artist based in Colombia. My work is rooted in personal experiences, concept, and graphics.\nI've created immersive visuals for international airports and museums using large-format LED displays.\nPassionate about merging code, sound, and emotion into futuristic art pieces.`} />
+            <TypingEffect text={`[init] user.id='Andrés Martínez' | role='multimedia_artist' | origin='Bogotá, Colombia'\\n> process.start(creative_coding + generative_systems + visual_storytelling)\\n> output: graphic_language.expand(perception.boundaries)\\n[protocol] art_as_interface -> hack(perception) -> open(aesthetic.dimensions)`} />
           </p>
         </div>
       </section>
