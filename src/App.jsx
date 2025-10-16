@@ -72,7 +72,7 @@ const App = () => {
     {
       title: "No Jardin",
       id: "project5",
-      videoUrl: "https://www.youtube.com/embed/Mh9U44Tam84",
+      videoUrl: "https://www.youtube.com/embed/7hkOFkvYv5s",
     },
     {
       title: "CyberDolls",
@@ -183,11 +183,7 @@ const App = () => {
           <div className="px-4 text-justify w-full relative">
             <p className="mb-10 text-sm">
               <TypingEffect
-                text={`I'm Andrés Martínez, a multimedia artist from Bogotá, Colombia. My work blends creative coding, generative animation, and visual storytelling to build graphic languages that push the boundaries of perception. I'm drawn to art as an interface — a way to hack the everyday and open portals to new aesthetic possibilities.
-
-I’ve been exploring formats ranging from live visuals and immersive projections to pieces developed with artificial intelligence and real-time audiovisual experimentation.
-
-Each piece is a drift, an experiment, and a visual manifesto of my time.`}
+                text={`[init] user.id='Andrés Martínez' | role='multimedia_artist' | origin='Bogotá, Colombia'\\n> process.start(creative_coding + generative_systems + visual_storytelling)\\n> output: graphic_language.expand(perception.boundaries)\\n[protocol] art_as_interface -> hack(perception) -> open(aesthetic.dimensions)`}
                 onComplete={handleCompleteTyping} // Llama a handleCompleteTyping al terminar
               />
             </p>
@@ -305,7 +301,8 @@ Each piece is a drift, an experiment, and a visual manifesto of my time.`}
                         <p className="mb-8 font-bold text-lg">No Jardin</p>
                         <p className="mb-8">
                           This is no longer my home — and it’s no longer yours either. I’m left without margaritas, and you without roses.<br />
-                          This project explores the concept of “No Jardín” through a series of visuals that challenge traditional notions of space and nature. The animations bring a unique perspective to the idea of gardens in a digital context.
+                          This project, originally conceived as a proposal for OFFF Festival Barcelona and projected at Disseny Hub Barcelona as part of the Projection Mapping showcase—a call that brought together renowned studios and talented artists—explores the concept of “No Jardín” through a series of visuals that challenge traditional ideas of space and nature.
+The animations offer a digital reinterpretation of what a garden can be when rooted not in soil, but in pixels and light.
                         </p>
                         {/* GIFs en fila */}
                       <div className="flex justify-center gap-4 mb-4">
