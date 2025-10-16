@@ -70,7 +70,7 @@ const App = () => {
     {
       title: "No Jardin",
       id: "project5",
-      videoUrl: "https://www.youtube.com/embed/U-ZVmD3W4wI",
+      videoUrl: "https://www.youtube.com/embed/7hkOFkvYv5s",
     },
     {
       title: "CyberDolls",
