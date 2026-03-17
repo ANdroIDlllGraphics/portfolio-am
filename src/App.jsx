@@ -38,10 +38,10 @@ const ShaderBackground = () => {
 
     // Bayer 8x8 dither — more visible pattern
     float dither8(vec2 px) {
-      int x = int(mod(px.x, 24.0));
-      int y = int(mod(px.y, 24.0));
-      // flattened 8x8 Bayer matrix / 64.0
-      float m[64];
+      int x = int(mod(px.x, 4.0));
+      int y = int(mod(px.y, 4.0));
+      // flattened 8x8 Bayer matrix / 32.0
+      float m[32];
       m[0]=0.0;  m[1]=32.0; m[2]=8.0;  m[3]=40.0; m[4]=2.0;  m[5]=34.0; m[6]=10.0; m[7]=42.0;
       m[8]=48.0; m[9]=16.0; m[10]=56.0;m[11]=24.0;m[12]=50.0;m[13]=18.0;m[14]=58.0;m[15]=26.0;
       m[16]=12.0;m[17]=44.0;m[18]=4.0; m[19]=36.0;m[20]=14.0;m[21]=46.0;m[22]=6.0; m[23]=38.0;
