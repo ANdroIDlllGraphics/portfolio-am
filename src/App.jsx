@@ -37,22 +37,17 @@ const ShaderBackground = () => {
     }
 
     // Bayer 8x8 dither — more visible pattern
-    float dither8(vec2 px) {
-      int x = int(mod(px.x, 4.0));
-      int y = int(mod(px.y, 4.0));
-      // flattened 8x8 Bayer matrix / 64.0
-      float m[64];
-      m[0]=0.0;  m[1]=32.0; m[2]=8.0;  m[3]=40.0; m[4]=2.0;  m[5]=34.0; m[6]=10.0; m[7]=42.0;
-      m[8]=48.0; m[9]=16.0; m[10]=56.0;m[11]=24.0;m[12]=50.0;m[13]=18.0;m[14]=58.0;m[15]=26.0;
-      m[16]=12.0;m[17]=44.0;m[18]=4.0; m[19]=36.0;m[20]=14.0;m[21]=46.0;m[22]=6.0; m[23]=38.0;
-      m[24]=60.0;m[25]=28.0;m[26]=52.0;m[27]=20.0;m[28]=62.0;m[29]=30.0;m[30]=54.0;m[31]=22.0;
-      m[32]=3.0; m[33]=35.0;m[34]=11.0;m[35]=43.0;m[36]=1.0; m[37]=33.0;m[38]=9.0; m[39]=41.0;
-      m[40]=51.0;m[41]=19.0;m[42]=59.0;m[43]=27.0;m[44]=49.0;m[45]=17.0;m[46]=57.0;m[47]=25.0;
-      m[48]=15.0;m[49]=47.0;m[50]=7.0; m[51]=39.0;m[52]=13.0;m[53]=45.0;m[54]=5.0; m[55]=37.0;
-      m[56]=63.0;m[57]=31.0;m[58]=55.0;m[59]=23.0;m[60]=61.0;m[61]=29.0;m[62]=53.0;m[63]=21.0;
-      int idx = y * 8 + x;
-      for (int k = 0; k < 64; k++) {
-        if (k == idx) return m[k] / 64.0;
+float dither8(vec2 px) {
+  int x = int(mod(px.x, 4.0));
+  int y = int(mod(px.y, 4.0));
+  float m[16];
+  m[0]=0.0;  m[1]=8.0;  m[2]=2.0;  m[3]=10.0;
+  m[4]=12.0; m[5]=4.0;  m[6]=14.0; m[7]=6.0;
+  m[8]=3.0;  m[9]=11.0; m[10]=1.0; m[11]=9.0;
+  m[12]=15.0;m[13]=7.0; m[14]=13.0;m[15]=5.0;
+  int idx = y * 4 + x;
+  for (int k = 0; k < 16; k++) {
+        if (k == idx) return m[k] / 16.0;
       }
       return 0.0;
     }
@@ -82,7 +77,7 @@ const ShaderBackground = () => {
       float val = n * 0.65 + n2 * 0.45 + scanline;
 
       // Dither
-      float threshold = dither8(gl_FragCoord.xy);
+      float threshold = dither8(gl_FragCoord.xy / 2.0);
       float dithered = step(threshold, val * 1.1);  // boosted multiplier
 
       // Mouse proximity — fade dithering within radius
