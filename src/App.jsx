@@ -705,10 +705,6 @@ const App = () => {
           </section>
 
           {/* ── Projects GIF ── */}
-          <div className="w-full" style={{ marginTop: "40px" }}>
-            <img src="/blue.gif" alt="Projects section" className="w-full h-auto" />
-          </div>
-
           {/* ── Projects ── */}
           <HoverTitle text="PROJECTS" id="projects" bg={true} style={{ transform: "translateY(5px)" }} />
           <section
@@ -880,10 +876,6 @@ const App = () => {
           {/* ── Contact ── */}
           <HoverTitle id="contact" text="CONTACT" bg={true} />
           <section id="contact" className="mt-0 mb-0">
-            <div className="w-full mb-16" style={{ marginTop: "-80px" }}>
-              <img src="/faces.gif" alt="Contact animation" className="w-full h-auto" />
-            </div>
-
             {/* HUD Contact Panel */}
             <div style={{
               border: "1px solid #ff6600",
@@ -989,6 +981,34 @@ const App = () => {
         {/* Bottom GIF */}
         <img src="/bg-af.gif" alt="background animation" className="w-full mt-0" />
 
+        {/* Game button */}
+        <div style={{
+          display: "flex", justifyContent: "center", alignItems: "center",
+          padding: "20px", background: "rgba(0,0,0,0.95)",
+          borderTop: "1px solid rgba(255,102,0,0.3)",
+          borderBottom: "1px solid rgba(255,102,0,0.3)",
+        }}>
+          <motion.a
+            href="/game.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{
+              display: "flex", flexDirection: "column", alignItems: "center",
+              gap: "4px", padding: "12px 32px",
+              border: "1px solid #ff6600", background: "transparent",
+              color: "#ff6600", fontFamily: "monospace", textDecoration: "none",
+              boxShadow: "4px 4px 20px rgba(0,0,0,0.6)",
+              cursor: "crosshair",
+            }}
+            whileHover={{ backgroundColor: "#ff6600", color: "#000", boxShadow: "0 0 24px rgba(255,102,0,0.4)" }}
+            transition={{ duration: 0.15 }}
+          >
+            <span style={{ fontSize: "9px", opacity: 0.6, letterSpacing: "0.2em" }}>[MINIGAME::ACTIVE]</span>
+            <span style={{ fontSize: "14px", fontWeight: "bold", letterSpacing: "0.2em" }}>▶ SPACE_INVADERS</span>
+            <span style={{ fontSize: "9px", opacity: 0.5, letterSpacing: "0.15em" }}>BRICK_GAME_9999::ARCADE_MODE</span>
+          </motion.a>
+        </div>
+
         {/* Ticker footer */}
         <Ticker text="LIFE IS JUST A GAME // IN THE SHADOWS // PUNK_BIT.ART // CREATIVE CODING // GENERATIVE SYSTEMS" />
       </div>
@@ -1032,6 +1052,9 @@ const App = () => {
 };
 
 export default App;
+
+
+
 
 
 
