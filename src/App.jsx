@@ -280,7 +280,13 @@ const HoverTitle = ({ id, text, bg = false, style }) => (
   <motion.div
     id={id}
     className={`w-full ${bg ? "bg-orange-500 text-black" : "bg-black text-orange-500"} py-2 mb-0`}
-    style={{ position: "relative", zIndex: 2, ...style }}
+    style={{
+      position: "relative", zIndex: 2,
+      boxShadow: bg
+        ? "0 4px 24px rgba(255,102,0,0.25), 0 2px 8px rgba(0,0,0,0.6)"
+        : "0 4px 16px rgba(0,0,0,0.7)",
+      ...style,
+    }}
     whileHover={!bg ? { backgroundColor: "#ff6600", color: "#000" } : {}}
     transition={{ duration: 0.2 }}
   >
@@ -316,6 +322,195 @@ const Ticker = ({ text }) => (
   </div>
 );
 
+// ─── HUD Header ───────────────────────────────────────────────────────────
+const HUDHeader = ({ onNav }) => {
+  const [time, setTime] = useState("");
+  const [signal, setSignal] = useState(87);
+  const [frameCount, setFrameCount] = useState(0);
+  const [statusMsg, setStatusMsg] = useState("SYSTEM NOMINAL");
+  const [hoveredBtn, setHoveredBtn] = useState(null);
+
+  const statusMessages = [
+    "SYSTEM NOMINAL", "SIGNAL STABLE", "RENDERING ACTIVE",
+    "GENERATIVE MODE ON", "SHADER LOADED", "STREAM ACTIVE",
+    "NODE CONNECTED", "OUTPUT: VISUAL_FEED_01",
+  ];
+
+  useEffect(() => {
+    const tick = setInterval(() => {
+      const now = new Date();
+      setTime(now.toTimeString().slice(0, 8));
+      setFrameCount(f => f + 1);
+      setSignal(80 + Math.floor(Math.random() * 15));
+    }, 1000);
+    const msgCycle = setInterval(() => {
+      setStatusMsg(statusMessages[Math.floor(Math.random() * statusMessages.length)]);
+    }, 3000);
+    return () => { clearInterval(tick); clearInterval(msgCycle); };
+  }, []);
+
+  const navItems = [
+    { label: "SYSTEM", code: "01", target: "projects" },
+    { label: "CONTACT", code: "02", target: "contact" },
+  ];
+
+  return (
+    <div style={{
+      position: "relative",
+      width: "100%",
+      fontFamily: "monospace",
+      zIndex: 10,
+      marginBottom: "0",
+    }}>
+      {/* ── Top bar — system info ── */}
+      <div style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center",
+        background: "#ff6600",
+        color: "#000",
+        padding: "2px 12px",
+        fontSize: "10px",
+        fontWeight: "bold",
+        letterSpacing: "0.1em",
+        clipPath: "polygon(0 0, 100% 0, 100% 100%, 8px 100%)",
+      }}>
+        <span>SYS::PUNK_BIT_OS v2.501</span>
+        <span style={{ display: "flex", gap: "16px" }}>
+          <span>SIG:{signal}%</span>
+          <span>FRM:{String(frameCount).padStart(4,"0")}</span>
+          <span>CLK:{time}</span>
+        </span>
+      </div>
+
+      {/* ── Main header ── */}
+      <div style={{
+        display: "flex",
+        alignItems: "stretch",
+        border: "1px solid #ff6600",
+        borderTop: "none",
+        background: "rgba(0,0,0,0.92)",
+        clipPath: "polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%)",
+      }}>
+
+        {/* Logo block */}
+        <div style={{
+          background: "#ff6600",
+          color: "#000",
+          padding: "0 20px",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          minWidth: "160px",
+          clipPath: "polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%)",
+          position: "relative",
+        }}>
+          <div style={{ fontSize: "18px", fontWeight: "900", letterSpacing: "0.15em", lineHeight: 1 }}>
+            <GlitchText text="PUNK_BIT" />
+          </div>
+          <div style={{ fontSize: "9px", opacity: 0.7, letterSpacing: "0.2em", marginTop: "2px" }}>
+            MULTIMEDIA_ARTIST
+          </div>
+        </div>
+
+        {/* Center — coordinates & status */}
+        <div style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          padding: "6px 16px",
+          borderLeft: "1px solid #ff6600",
+          borderRight: "1px solid #ff6600",
+          gap: "3px",
+        }}>
+          <div style={{ fontSize: "9px", color: "#ff6600", opacity: 0.6, letterSpacing: "0.15em" }}>
+            LOC::4.7110°N 74.0721°W // BOGOTÁ_CO // NODE_ACTIVE
+          </div>
+          <div style={{ fontSize: "10px", color: "#ff6600", letterSpacing: "0.1em", display: "flex", alignItems: "center", gap: "8px" }}>
+            <span style={{
+              display: "inline-block", width: "6px", height: "6px",
+              background: "#ff6600", borderRadius: "50%",
+              boxShadow: "0 0 6px #ff6600",
+              animation: "pulse 1.2s ease-in-out infinite",
+            }} />
+            {statusMsg}
+          </div>
+          {/* Mini signal bars */}
+          <div style={{ display: "flex", gap: "2px", alignItems: "flex-end", height: "10px" }}>
+            {[3,5,7,9,7,5,8,6,4,7,9,5].map((h, i) => (
+              <div key={i} style={{
+                width: "3px", height: `${h}px`,
+                background: "#ff6600",
+                opacity: 0.3 + (i % 3) * 0.2,
+              }} />
+            ))}
+          </div>
+        </div>
+
+        {/* Nav buttons */}
+        <div style={{ display: "flex", alignItems: "stretch" }}>
+          {navItems.map((item, i) => (
+            <motion.button
+              key={item.code}
+              onMouseEnter={() => setHoveredBtn(i)}
+              onMouseLeave={() => setHoveredBtn(null)}
+              onClick={() => onNav(item.target)}
+              style={{
+                background: hoveredBtn === i ? "#ff6600" : "transparent",
+                color: hoveredBtn === i ? "#000" : "#ff6600",
+                border: "none",
+                borderLeft: "1px solid #ff6600",
+                padding: "0 20px",
+                cursor: "crosshair",
+                fontFamily: "monospace",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: "2px",
+                minWidth: "90px",
+                transition: "all 0.15s",
+                clipPath: i === navItems.length - 1
+                  ? "polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%)"
+                  : "none",
+              }}
+            >
+              <span style={{ fontSize: "9px", opacity: 0.6, letterSpacing: "0.2em" }}>[{item.code}]</span>
+              <span style={{ fontSize: "11px", fontWeight: "bold", letterSpacing: "0.15em" }}>{item.label}</span>
+            </motion.button>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Bottom status bar ── */}
+      <div style={{
+        display: "flex",
+        justifyContent: "space-between",
+        padding: "2px 12px",
+        fontSize: "9px",
+        color: "#ff6600",
+        opacity: 0.5,
+        letterSpacing: "0.1em",
+        borderLeft: "1px solid #ff6600",
+        borderRight: "1px solid #ff6600",
+        borderBottom: "1px solid #ff6600",
+        background: "rgba(0,0,0,0.6)",
+      }}>
+        <span>■ GLSL_SHADER::ACTIVE ■ DITHER::8x8 ■ WEBGL::ENABLED</span>
+        <span>ORIGIN::BOGOTÁ ■ OUTPUT::SCREEN</span>
+      </div>
+
+      <style>{`
+        @keyframes pulse {
+          0%, 100% { opacity: 1; box-shadow: 0 0 6px #ff6600; }
+          50% { opacity: 0.3; box-shadow: none; }
+        }
+      `}</style>
+    </div>
+  );
+};
+
 // ─── Main App ──────────────────────────────────────────────────────────────
 const App = () => {
   const [hoveredButton, setHoveredButton] = useState(null);
@@ -330,26 +525,88 @@ const App = () => {
     {
       title: "El Dorado Airport 360 LED",
       id: "project2",
+      year: "2023",
+      tags: ["INSTALLATION", "LED", "GENERATIVE"],
+      client: "BANCO_DE_LA_REPÚBLICA + VOLARTE",
+      tool: "TOUCHDESIGNER + AI",
+      type: "PUBLIC_ART",
+      subtitle: "Tribute to Beatriz González — Digital Reinterpretation",
+      description: "Six animated video loops created to celebrate the 90th birthday of Colombian artist Beatriz González. Each piece reinterprets her most iconic works through image processing and generative AI, applying a digital paint effect that expands the painted forms into motion.",
+      description2: "The animations ran continuously on a large-format LED column at El Dorado International Airport in Bogotá, with institutional support from Banco de la República and Volarte — bringing González's visual legacy to thousands of daily travelers.",
+      gifs: [
+        { url: "/BG_001.gif", alt: "Beatriz González animation 1", width: "48%" },
+        { url: "/BG_002.gif", alt: "Beatriz González animation 2", width: "48%" },
+      ],
       videoUrl: "https://www.youtube.com/embed/Nj_HoMbZlr8",
     },
     {
       title: "Visuals//BMTH Live Show",
       id: "project3",
+      year: "2024",
+      tags: ["LIVE_VISUALS", "VJ", "REAL-TIME"],
+      client: "BRING_ME_THE_HORIZON",
+      tool: "TOUCHDESIGNER + RESOLUME",
+      type: "LIVE_PERFORMANCE",
+      subtitle: "Real-time Visuals — Happy Song Performance",
+      description: "Real-time generative visuals designed for Bring Me The Horizon's performance of Happy Song during their live show in Bogotá. The visual system was built to respond to the energy and structure of the track, creating a dynamic audiovisual environment that amplified the performance's impact.",
+      gifs: [
+        { url: "/BMTH_001.gif", alt: "BMTH visual 1" },
+        { url: "/BMTH_002.gif", alt: "BMTH visual 2" },
+        { url: "/BMTH_003.gif", alt: "BMTH visual 3" },
+      ],
       videoUrl: "https://www.youtube.com/embed/_LTvnRwvf9c",
     },
     {
       title: "Molas full 360 LED Screens",
       id: "project4",
+      year: "2023",
+      tags: ["INSTALLATION", "360°", "CULTURAL"],
+      client: "VOLARTE",
+      tool: "TOUCHDESIGNER + AFTER_EFFECTS",
+      type: "PUBLIC_INSTALLATION",
+      subtitle: "Cultural Heritage — Full 360° LED Display",
+      description: "A large-scale digital installation celebrating the Mola textile tradition of the Guna people of Panama. Traditional geometric patterns were digitally animated and mapped onto full 360-degree LED columns, creating an immersive display that merges ancestral visual language with contemporary media technology.",
+      description2: "The installation was presented at El Dorado International Airport in Bogotá and later at Ezeiza International Airport in Buenos Aires — placing indigenous cultural heritage in high-traffic international spaces.",
+      gifs: [
+        { url: "/molas_001.gif", alt: "Molas animation", width: "48%" },
+        { url: "/molas_img.png", alt: "Molas installation", width: "48%" },
+      ],
       videoUrl: "https://www.youtube.com/embed/1Psh961BjgY",
     },
     {
       title: "No Jardin",
       id: "project5",
+      year: "2024",
+      tags: ["PROJECTION_MAPPING", "GENERATIVE", "OFFF"],
+      client: "OFFF_FESTIVAL_BARCELONA",
+      tool: "TOUCHDESIGNER + GLSL",
+      type: "PROJECTION_MAPPING",
+      subtitle: "No Jardín — Disseny Hub Barcelona",
+      description: "A generative projection mapping piece selected for the OFFF Festival Barcelona open call and projected at Disseny Hub Barcelona as part of the festival's Projection Mapping showcase. The work explores the dissolution of domestic and natural space through digital reinterpretation — gardens reconstructed from pixels and light rather than soil.",
+      description2: "The animations deconstruct the idea of a garden as a fixed, organic space, replacing growth with recursion, texture with dithering, and nature with algorithmic pattern.",
+      gifs: [
+        { url: "/jardin_001.gif", alt: "No Jardin visual 1" },
+        { url: "/jardin_002.gif", alt: "No Jardin visual 2" },
+        { url: "/jardin_003.gif", alt: "No Jardin visual 3" },
+      ],
       videoUrl: "https://www.youtube.com/embed/7hkOFkvYv5s",
     },
     {
       title: "CyberDolls",
       id: "project6",
+      year: "2024",
+      tags: ["REAL-TIME", "AI", "GLITCH"],
+      client: "PERSONAL_PROJECT",
+      tool: "TOUCHDESIGNER + GLSL + AI",
+      type: "GENERATIVE_ART",
+      subtitle: "CyberDolls — Digital Identity & Visual Distortion",
+      description: "A real-time generative art project that merges AI image synthesis with post-processing systems built in TouchDesigner. Anime-style figures generated through AI are subjected to dithering, displacement mapping, and layered pixel effects — fragmenting the source image into something unstable and synthetic.",
+      description2: "The result questions the boundaries between digital identity, constructed beauty, and visual corruption. Each output is unique, generated in real-time, and never fully resolved.",
+      gifs: [
+        { url: "/CBRGRL_001.gif", alt: "CyberDolls visual 1" },
+        { url: "/CBRGRL_002.gif", alt: "CyberDolls visual 2" },
+        { url: "/CBRGRL_003.gif", alt: "CyberDolls visual 3" },
+      ],
       videoUrl: "https://www.youtube.com/embed/14xWbF2yR_s",
     },
   ];
@@ -376,38 +633,8 @@ const App = () => {
       <div style={{ position: "relative", zIndex: 2 }}>
         <div className="max-w-5xl mx-auto px-4">
 
-          {/* ── Header ── */}
-          <div className="flex justify-center">
-            <div className="w-full border border-orange-500">
-              <div className="flex flex-row items-center justify-between">
-                <div className="bg-orange-500 text-black px-4 py-3 text-xl font-bold w-full h-12 flex items-center font-sans tracking-widest uppercase">
-                  <GlitchText text="punk_bit" />
-                </div>
-                <div className="flex flex-row flex-wrap gap-0 w-full h-12">
-                  {buttons.map((btn, index) => (
-                    <motion.button
-                      key={btn}
-                      onMouseEnter={() => setHoveredButton(index)}
-                      onMouseLeave={() => setHoveredButton(null)}
-                      onClick={() => {
-                        if (btn === "System") scrollTo("projects");
-                        else scrollTo(btn.toLowerCase());
-                      }}
-                      className="flex-1 px-4 py-2 bg-black h-12 w-full text-sm"
-                      animate={{
-                        backgroundColor: hoveredButton === index ? "#ff6600" : "#000000",
-                        color: hoveredButton === index ? "#000000" : "#ff6600",
-                      }}
-                      transition={{ duration: 0.15 }}
-                      style={{ border: "none" }}
-                    >
-                      {btn}
-                    </motion.button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* ── HUD Header ── */}
+          <HUDHeader onNav={scrollTo} />
 
           {/* ── Hero GIF ── */}
           <div className="w-full">
@@ -451,8 +678,21 @@ const App = () => {
           <HoverTitle text="PROJECTS" id="projects" bg={true} style={{ transform: "translateY(5px)" }} />
           <section
             className="bg-orange-500 text-black px-0 py-10 flex flex-col justify-end relative"
-            style={{ marginTop: "-10px" }}
+            style={{
+              marginTop: "-10px",
+              boxShadow: "0 8px 40px 0 rgba(255,102,0,0.18), 0 2px 8px 0 rgba(0,0,0,0.7)",
+            }}
           >
+            {/* HUD section header */}
+            <div style={{
+              display: "flex", justifyContent: "space-between", alignItems: "center",
+              padding: "0 24px 12px 24px", fontSize: "10px", fontFamily: "monospace",
+              borderBottom: "1px solid rgba(0,0,0,0.2)", marginBottom: "8px",
+            }}>
+              <span>// PROJECT_INDEX :: {projects.filter(Boolean).length} ENTRIES LOADED</span>
+              <span>STATUS::PORTFOLIO_ACTIVE</span>
+            </div>
+
             <div
               className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-6 items-end"
               style={{ maxWidth: "100%", margin: "0 auto" }}
@@ -465,19 +705,38 @@ const App = () => {
                       setExpandedProject(expandedProject === project.id ? null : project.id);
                       setTimeout(() => scrollTo(project.id), 100);
                     }}
-                    className="relative px-6 pt-6 pb-16 bg-black text-orange-500 flex items-start"
+                    className="relative bg-black text-orange-500 flex flex-col items-start"
                     style={{
-                      height: "120px",
-                      border: "2px solid black",
+                      height: "130px",
                       width: "305px",
                       marginBottom: "20px",
-                      clipPath: "polygon(0% 15%, 10% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 15%)",
+                      border: "1px solid rgba(255,102,0,0.4)",
+                      padding: "0",
+                      boxShadow: "4px 6px 24px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,102,0,0.15)",
                     }}
-                    whileHover={{ backgroundColor: "#000", color: "#ff6600", scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    transition={{ duration: 0.15 }}
+                    whileHover={{ scale: 1.03, boxShadow: "6px 10px 32px rgba(0,0,0,0.8), 0 0 16px rgba(255,102,0,0.3)" }}
+                    whileTap={{ scale: 0.97 }}
+                    transition={{ duration: 0.18 }}
                   >
-                    {project.title}
+                    {/* Card top bar */}
+                    <div style={{
+                      width: "100%", background: "#ff6600", color: "#000",
+                      padding: "3px 14px", fontSize: "9px", fontFamily: "monospace",
+                      letterSpacing: "0.15em", display: "flex", justifyContent: "space-between",
+                    }}>
+                      <span>PRJ::{String(index).padStart(2,"0")}</span>
+                      <span>{expandedProject === project.id ? "■ OPEN" : "▶ LOAD"}</span>
+                    </div>
+                    {/* Card content */}
+                    <div style={{ padding: "10px 14px", flex: 1, display: "flex", flexDirection: "column", justifyContent: "space-between", width: "100%" }}>
+                      <span style={{ fontSize: "12px", fontWeight: "bold", letterSpacing: "0.08em", lineHeight: 1.3, textAlign: "left" }}>
+                        {project.title}
+                      </span>
+                      <div style={{ fontSize: "9px", opacity: 0.5, letterSpacing: "0.12em", display: "flex", justifyContent: "space-between" }}>
+                        <span>{project.year}</span>
+                        <span>{project.tags?.[0]}</span>
+                      </div>
+                    </div>
                   </motion.button>
                 ) : (
                   <div key={index} />
@@ -495,92 +754,79 @@ const App = () => {
                   <motion.section
                     key={project.id}
                     id={project.id}
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: "auto" }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.4 }}
-                    className="text-orange-500 bg-black px-4 py-8 max-w-5xl mx-auto overflow-hidden"
-                    style={{ borderLeft: "2px solid #ff6600" }}
+                    initial={{ opacity: 0, scaleY: 0, originY: 0 }}
+                    animate={{ opacity: 1, scaleY: 1 }}
+                    exit={{ opacity: 0, scaleY: 0 }}
+                    transition={{ duration: 0.35, ease: "easeOut" }}
+                    className="text-orange-500 bg-black px-0 max-w-5xl mx-auto overflow-hidden"
+                    style={{
+                      borderLeft: "2px solid #ff6600",
+                      borderRight: "2px solid #ff6600",
+                      borderBottom: "2px solid #ff6600",
+                      boxShadow: "0 16px 48px rgba(255,102,0,0.12), 0 4px 16px rgba(0,0,0,0.8)",
+                    }}
                   >
-                    <HoverTitle text={project.title} />
-                    <div className="py-8 text-base">
-                      {project.title === "El Dorado Airport 360 LED" ? (
-                        <>
-                          <p className="mb-4 font-bold text-lg">Tribute to Beatriz González</p>
-                          <p className="mb-8">
-                            To celebrate the 90th birthday of artist Beatriz González, six animated videos were created by reinterpreting some of her most iconic works using image processing and artificial intelligence. The animations expand elements of the original paintings and apply a digital "paint" effect, blending traditional techniques with modern digital tools.
-                          </p>
-                          <p className="mb-8">
-                            These looped animations were displayed on a large LED column at El Dorado International Airport in Bogotá, with support from the Banco de la República and Volarte.
-                          </p>
-                          <div className="flex justify-center gap-4 mb-4">
-                            <img src="/BG_001.gif" alt="Background Animation 1" className="w-[48%] h-auto" />
-                            <img src="/BG_002.gif" alt="Background Animation 2" className="w-[48%] h-auto" />
-                          </div>
-                        </>
-                      ) : project.title === "Visuals//BMTH Live Show" ? (
-                        <>
-                          <p className="mb-8 font-bold text-lg">Visuals for Happy Song – BMTH Live Show</p>
-                          <p className="mb-8">
-                            This project involved creating live visuals for BMTH's performance of "Happy Song." The visuals were designed to amplify the energy of the performance and create a dynamic audiovisual experience.
-                          </p>
-                          <div className="flex justify-center gap-4 mb-4">
-                            <img src="/BMTH_001.gif" alt="BMTH Animation 1" className="w-[32%] h-auto" />
-                            <img src="/BMTH_002.gif" alt="BMTH Animation 2" className="w-[32%] h-auto" />
-                            <img src="/BMTH_003.gif" alt="BMTH Animation 3" className="w-[32%] h-auto" />
-                          </div>
-                        </>
-                      ) : project.title === "Molas full 360 LED Screens" ? (
-                        <>
-                          <p className="mb-8 font-bold text-lg">Molas full 360 LED Screens</p>
-                          <p className="mb-8">
-                            This project showcases the vibrant and intricate designs of Molas art on a full 360-degree LED screen. The visuals celebrate the cultural heritage of the Guna people, blending traditional patterns with modern digital techniques. It appeared at El Dorado International Airport in Bogotá and later at Ezeiza International Airport in Buenos Aires.
-                          </p>
-                          <div className="flex justify-center gap-4 mb-4">
-                            <img src="/molas_001.gif" alt="Molas Animation" className="w-[48%] h-auto" />
-                            <img src="/molas_img.png" alt="Molas Image" className="w-[48%] h-auto" />
-                          </div>
-                        </>
-                      ) : project.title === "No Jardin" ? (
-                        <>
-                          <p className="mb-8 font-bold text-lg">No Jardin</p>
-                          <p className="mb-8">
-                            This is no longer my home — and it's no longer yours either. I'm left without margaritas, and you without roses.<br />
-                            Originally conceived as a proposal for OFFF Festival Barcelona and projected at Disseny Hub Barcelona as part of the Projection Mapping showcase, this project explores "No Jardín" through visuals that challenge traditional ideas of space and nature.
-                          </p>
-                          <div className="flex justify-center gap-4 mb-4">
-                            <img src="/jardin_001.gif" alt="No Jardin 1" className="w-[32%] h-auto" />
-                            <img src="/jardin_002.gif" alt="No Jardin 2" className="w-[32%] h-auto" />
-                            <img src="/jardin_003.gif" alt="No Jardin 3" className="w-[32%] h-auto" />
-                          </div>
-                        </>
-                      ) : project.title === "CyberDolls" ? (
-                        <>
-                          <p className="mb-8 font-bold text-lg">CyberDolls</p>
-                          <p className="mb-8">
-                            Cyberdolls is a real-time visual project that merges image processing and artificial intelligence. Several anime-style figures were generated using AI, then altered through effects like dithering, displacement, and layered pixel imagery. The result is a fragmented, glitch-driven aesthetic that explores the boundaries between digital identity, synthetic beauty, and visual distortion.
-                          </p>
-                          <div className="flex justify-center gap-4 mb-4">
-                            <img src="/CBRGRL_001.gif" alt="CyberDolls 1" className="w-[32%] h-auto" />
-                            <img src="/CBRGRL_002.gif" alt="CyberDolls 2" className="w-[32%] h-auto" />
-                            <img src="/CBRGRL_003.gif" alt="CyberDolls 3" className="w-[32%] h-auto" />
-                          </div>
-                        </>
-                      ) : (
-                        <p className="mb-8">Details coming soon: {project.title}</p>
+                    {/* Project HUD header */}
+                    <div style={{
+                      background: "#ff6600", color: "#000",
+                      padding: "4px 16px", fontFamily: "monospace", fontSize: "10px",
+                      display: "flex", justifyContent: "space-between", letterSpacing: "0.15em",
+                    }}>
+                      <span>// LOADING :: {project.id.toUpperCase()}</span>
+                      <span>{project.year} ■ {project.tags?.join(" ■ ")}</span>
+                    </div>
+
+                    <div style={{ padding: "24px 24px 32px" }}>
+                      {/* Meta info row */}
+                      <div style={{
+                        display: "flex", gap: "24px", marginBottom: "20px",
+                        fontSize: "9px", opacity: 0.5, letterSpacing: "0.15em", fontFamily: "monospace",
+                        borderBottom: "1px solid rgba(255,102,0,0.2)", paddingBottom: "12px",
+                      }}>
+                        <span>CLIENT::{project.client}</span>
+                        <span>TOOL::{project.tool}</span>
+                        <span>TYPE::{project.type}</span>
+                      </div>
+
+                      <p style={{ fontWeight: "bold", fontSize: "16px", marginBottom: "12px", fontFamily: "monospace" }}>
+                        {project.subtitle}
+                      </p>
+                      <p style={{ marginBottom: "24px", fontSize: "14px", lineHeight: 1.7, opacity: 0.85 }}>
+                        {project.description}
+                      </p>
+                      {project.description2 && (
+                        <p style={{ marginBottom: "24px", fontSize: "14px", lineHeight: 1.7, opacity: 0.85 }}>
+                          {project.description2}
+                        </p>
                       )}
 
+                      {/* GIFs */}
+                      <div className="flex justify-center gap-4 mb-6">
+                        {project.gifs?.map((src, i) => (
+                          <img key={i} src={src.url} alt={src.alt}
+                            style={{ width: src.width || "32%", height: "auto",
+                              boxShadow: "4px 4px 20px rgba(0,0,0,0.7)",
+                            }} />
+                        ))}
+                      </div>
+
+                      {/* Video */}
                       {project.videoUrl && (
-                        <iframe
-                          width="100%"
-                          height="315"
-                          src={`${project.videoUrl}?rel=0`}
-                          title={`${project.title} video`}
-                          frameBorder="0"
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                          className="w-full mt-4"
-                        />
+                        <div style={{ position: "relative" }}>
+                          <div style={{
+                            fontSize: "9px", fontFamily: "monospace", letterSpacing: "0.15em",
+                            opacity: 0.5, marginBottom: "8px",
+                          }}>// VIDEO_FEED :: STREAM_ACTIVE</div>
+                          <iframe
+                            width="100%" height="315"
+                            src={`${project.videoUrl}?rel=0`}
+                            title={`${project.title} video`}
+                            frameBorder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowFullScreen
+                            style={{ width: "100%", boxShadow: "0 8px 32px rgba(0,0,0,0.8)" }}
+                          />
+                        </div>
                       )}
                     </div>
                   </motion.section>
@@ -594,35 +840,104 @@ const App = () => {
             <div className="w-full mb-16" style={{ marginTop: "-80px" }}>
               <img src="/faces.gif" alt="Contact animation" className="w-full h-auto" />
             </div>
-            <div className="flex flex-col px-4">
-              <div className="text-justify max-w-full">
-                <p className="mb-[50px] text-sm">
-                  {/* FIX: removed template literal that was leaking "undefined" */}
+
+            {/* HUD Contact Panel */}
+            <div style={{
+              border: "1px solid #ff6600",
+              background: "rgba(0,0,0,0.92)",
+              boxShadow: "4px 6px 32px rgba(255,102,0,0.12), 0 2px 12px rgba(0,0,0,0.8)",
+              marginBottom: "48px",
+            }}>
+              {/* Panel top bar */}
+              <div style={{
+                background: "#ff6600", color: "#000",
+                padding: "3px 16px", fontFamily: "monospace", fontSize: "10px",
+                display: "flex", justifyContent: "space-between", letterSpacing: "0.15em",
+              }}>
+                <span>// CONTACT_MODULE :: INITIALIZED</span>
+                <span>NODE::PUNK_BIT ■ STATUS::OPEN</span>
+              </div>
+
+              <div style={{ padding: "24px" }}>
+                {/* Status line */}
+                <div style={{
+                  fontSize: "9px", color: "#ff6600", opacity: 0.5,
+                  letterSpacing: "0.15em", marginBottom: "16px", fontFamily: "monospace",
+                }}>
+                  AVAILABILITY::FREELANCE ■ SERVICES::LIVE_VISUALS + GENERATIVE_ART + INSTALLATION
+                </div>
+
+                {/* Typing message */}
+                <div style={{ marginBottom: "28px" }}>
                   <TypingEffect text={"Hire visuals?\nLet's collaborate or just say hi!"} />
-                </p>
-                <div className="flex flex-col gap-2 mt-8 mb-6">
+                </div>
+
+                {/* Divider */}
+                <div style={{
+                  borderTop: "1px solid rgba(255,102,0,0.2)",
+                  marginBottom: "20px", paddingTop: "16px",
+                  fontSize: "9px", color: "#ff6600", opacity: 0.4,
+                  letterSpacing: "0.15em", fontFamily: "monospace",
+                }}>
+                  // NETWORK_LINKS :: SELECT_CHANNEL
+                </div>
+
+                {/* Links grid */}
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))",
+                  gap: "8px",
+                }}>
                   {[
-                    { label: "MAIL", href: "mailto:johhannmartinez@hotmail.com" },
-                    { label: "INSTAGRAM", href: "https://instagram.com/punk_bit" },
-                    { label: "TIKTOK", href: "https://www.tiktok.com/@punk_bit" },
-                    { label: "PATREON", href: "https://www.patreon.com/c/project2501" },
-                    { label: "BEHANCE", href: "https://www.behance.net/johhannmartnez" },
-                    { label: "YOUTUBE", href: "https://www.youtube.com/@ANdroIDGraphics00" },
-                  ].map(({ label, href }, idx) => (
+                    { label: "MAIL", code: "01", href: "mailto:johhannmartinez@hotmail.com", desc: "DIRECT_CHANNEL" },
+                    { label: "INSTAGRAM", code: "02", href: "https://instagram.com/punk_bit", desc: "@punk_bit" },
+                    { label: "TIKTOK", code: "03", href: "https://www.tiktok.com/@punk_bit", desc: "@punk_bit" },
+                    { label: "PATREON", code: "04", href: "https://www.patreon.com/c/project2501", desc: "project2501" },
+                    { label: "BEHANCE", code: "05", href: "https://www.behance.net/johhannmartnez", desc: "PORTFOLIO" },
+                    { label: "YOUTUBE", code: "06", href: "https://www.youtube.com/@ANdroIDGraphics00", desc: "ANdroIDGraphics00" },
+                  ].map(({ label, code, href, desc }, idx) => (
                     <motion.a
                       key={idx}
                       href={href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="py-2 px-4 text-sm bg-black text-orange-500 text-left"
-                      style={{ minWidth: "200px", border: "1px solid #ff6600" }}
-                      whileHover={{ backgroundColor: "#ff6600", color: "#000" }}
+                      style={{
+                        display: "flex", flexDirection: "column",
+                        padding: "10px 14px",
+                        background: "transparent",
+                        border: "1px solid rgba(255,102,0,0.35)",
+                        color: "#ff6600", textDecoration: "none",
+                        fontFamily: "monospace",
+                        boxShadow: "2px 3px 12px rgba(0,0,0,0.5)",
+                        gap: "3px",
+                      }}
+                      whileHover={{
+                        backgroundColor: "#ff6600",
+                        color: "#000",
+                        boxShadow: "4px 6px 20px rgba(255,102,0,0.25)",
+                      }}
                       transition={{ duration: 0.15 }}
                     >
-                      <GlitchText text={label} />
+                      <div style={{ fontSize: "9px", opacity: 0.5, letterSpacing: "0.2em" }}>[{code}]</div>
+                      <div style={{ fontSize: "12px", fontWeight: "bold", letterSpacing: "0.12em" }}>
+                        <GlitchText text={label} />
+                      </div>
+                      <div style={{ fontSize: "9px", opacity: 0.5, letterSpacing: "0.1em" }}>{desc}</div>
                     </motion.a>
                   ))}
                 </div>
+              </div>
+
+              {/* Panel bottom bar */}
+              <div style={{
+                borderTop: "1px solid rgba(255,102,0,0.2)",
+                padding: "4px 16px",
+                fontSize: "9px", color: "#ff6600", opacity: 0.35,
+                letterSpacing: "0.12em", fontFamily: "monospace",
+                display: "flex", justifyContent: "space-between",
+              }}>
+                <span>ORIGIN::BOGOTÁ_CO ■ 4.7110°N 74.0721°W</span>
+                <span>ENCRYPT::NONE ■ HANDSHAKE::OPEN</span>
               </div>
             </div>
           </section>
@@ -660,6 +975,7 @@ const App = () => {
           max-width: 100%;
           overflow: hidden;
           margin: 0 auto;
+          box-shadow: 4px 6px 24px rgba(255,102,0,0.15), 0 2px 8px rgba(0,0,0,0.8);
         }
         @media (min-width: 640px) { .typing-container { max-width: 80%; } }
         @media (min-width: 1024px) { .typing-container { max-width: 60%; } }
@@ -673,11 +989,6 @@ const App = () => {
 };
 
 export default App;
-
-
-
-
-
 
 
 
