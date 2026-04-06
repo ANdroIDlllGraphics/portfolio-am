@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPACE_INVADERS :: PUNK_BIT ARCADE</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #000;
+      color: #ff6600;
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      overflow: hidden;
+      cursor: crosshair;
+    }
+
+    /* CRT scanlines */
+    body::after {
+      content: '';
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.07) 2px,
+        rgba(0,0,0,0.07) 4px
+      );
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    #wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0;
+      width: 100%;
+      max-width: 520px;
+      padding: 0 12px;
+    }
+
+    /* Top HUD bar */
+    #hud-top {
+      width: 100%;
+      background: #ff6600;
+      color: #000;
+      padding: 3px 12px;
+      font-size: 10px;
+      font-weight: bold;
+      letter-spacing: 0.12em;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    /* Main panel */
+    #panel {
+      width: 100%;
+      border: 1px solid #ff6600;
+      border-top: none;
+      background: rgba(0,0,0,0.95);
+      box-shadow: 0 8px 40px rgba(255,102,0,0.15), 4px 4px 24px rgba(0,0,0,0.8);
+    }
+
+    /* Score bar */
+    #score-bar {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 12px;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      border-bottom: 1px solid rgba(255,102,0,0.3);
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      image-rendering: pixelated;
+    }
+
+    /* Bottom HUD */
+    #hud-bottom {
+      width: 100%;
+      border: 1px solid #ff6600;
+      border-top: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 12px;
+      font-size: 9px;
+      opacity: 0.5;
+      letter-spacing: 0.12em;
+    }
+
+    /* Controls hint */
+    #controls {
+      margin-top: 12px;
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      opacity: 0.4;
+      text-align: center;
+      line-height: 1.8;
+    }
+
+    /* Back button */
+    #back {
+      margin-top: 16px;
+      padding: 8px 24px;
+      border: 1px solid rgba(255,102,0,0.4);
+      background: transparent;
+      color: #ff6600;
+      font-family: monospace;
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      cursor: crosshair;
+      text-decoration: none;
+      transition: all 0.15s;
+    }
+    #back:hover {
+      background: #ff6600;
+      color: #000;
+    }
+
+    /* Overlay screens */
+    #overlay {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0,0,0,0.88);
+      gap: 12px;
+      z-index: 10;
+    }
+    #overlay h2 {
+      font-size: 20px;
+      letter-spacing: 0.2em;
+      color: #ff6600;
+    }
+    #overlay p {
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      opacity: 0.6;
+    }
+    #overlay button {
+      margin-top: 8px;
+      padding: 10px 28px;
+      background: #ff6600;
+      color: #000;
+      border: none;
+      font-family: monospace;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 0.2em;
+      cursor: crosshair;
+    }
+
+    #canvas-wrap {
+      position: relative;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+<div id="wrapper">
+  <!-- Top HUD -->
+  <div id="hud-top">
+    <span>SYS::PUNK_BIT_ARCADE</span>
+    <span id="hud-time"></span>
+  </div>
+
+  <div id="panel">
+    <!-- Score bar -->
+    <div id="score-bar">
+      <span>SCORE:<span id="score">000000</span></span>
+      <span>LEVEL:<span id="level">01</span></span>
+      <span>LIVES:<span id="lives">███</span></span>
+    </div>
+
+    <!-- Canvas -->
+    <div id="canvas-wrap">
+      <canvas id="c"></canvas>
+      <div id="overlay">
+        <h2>SPACE_INVADERS</h2>
+        <p>// BRICK_GAME_9999 :: ARCADE_MODE</p>
+        <p>PUNK_BIT EDITION</p>
+        <button onclick="startGame()">[ INITIALIZE ]</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom HUD -->
+  <div id="hud-bottom">
+    <span>ORIGIN::BOGOTÁ_CO</span>
+    <span>ENGINE::CANVAS2D</span>
+    <span>FPS::60</span>
+  </div>
+
+  <!-- Controls -->
+  <div id="controls">
+    ← → MOVE &nbsp;|&nbsp; SPACE FIRE &nbsp;|&nbsp; MOBILE: TAP SIDES TO MOVE · CENTER TO FIRE
+  </div>
+
+  <a id="back" href="javascript:window.close()">[ ← BACK TO SYSTEM ]</a>
+</div>
+
+<script>
+  // ── Clock ──
+  setInterval(() => {
+    document.getElementById('hud-time').textContent =
+      'CLK:' + new Date().toTimeString().slice(0,8);
+  }, 1000);
+
+  // ── Canvas setup ──
+  const canvas = document.getElementById('c');
+  const ctx = canvas.getContext('2d');
+  const W = 480, H = 360;
+  canvas.width = W;
+  canvas.height = H;
+
+  // ── Game state ──
+  let state = 'idle';
+  let score = 0, lives = 3, level = 1;
+  let player, bullets, enemies, enemyBullets, particles;
+  let enemyDir = 1, enemySpeed = 0.5, enemyDropped = false;
+  let fireTimer = 0, enemyFireRate = 90;
+  let frame = 0;
+
+  // ── Player ──
+  function makePlayer() {
+    return { x: W / 2, y: H - 30, w: 28, h: 14, speed: 4 };
+  }
+
+  // ── Enemy grid ──
+  function makeEnemies() {
+    const rows = 4, cols = 9;
+    const arr = [];
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        arr.push({
+          x: 40 + c * 44,
+          y: 40 + r * 32,
+          w: 24, h: 16,
+          alive: true,
+          type: r === 0 ? 2 : r < 2 ? 1 : 0,
+          points: r === 0 ? 30 : r < 2 ? 20 : 10,
+          anim: Math.random() > 0.5 ? 0 : 1,
+        });
+      }
+    }
+    return arr;
+  }
+
+  // ── Particles ──
+  function explode(x, y, color) {
+    for (let i = 0; i < 10; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const speed = 1 + Math.random() * 3;
+      particles.push({
+        x, y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        life: 30 + Math.random() * 20,
+        maxLife: 50,
+        color,
+      });
+    }
+  }
+
+  // ── Init ──
+  function startGame() {
+    document.getElementById('overlay').style.display = 'none';
+    score = 0; lives = 3; level = 1;
+    player = makePlayer();
+    bullets = [];
+    enemyBullets = [];
+    enemies = makeEnemies();
+    particles = [];
+    enemyDir = 1;
+    enemySpeed = 0.5 + (level - 1) * 0.15;
+    enemyFireRate = Math.max(40, 90 - (level - 1) * 10);
+    fireTimer = 0;
+    state = 'playing';
+    updateHUD();
+    requestAnimationFrame(loop);
+  }
+
+  function nextLevel() {
+    level++;
+    enemies = makeEnemies();
+    bullets = [];
+    enemyBullets = [];
+    enemyDir = 1;
+    enemySpeed = 0.5 + (level - 1) * 0.15;
+    enemyFireRate = Math.max(40, 90 - (level - 1) * 10);
+    updateHUD();
+  }
+
+  function updateHUD() {
+    document.getElementById('score').textContent = String(score).padStart(6, '0');
+    document.getElementById('level').textContent = String(level).padStart(2, '0');
+    document.getElementById('lives').textContent = '█'.repeat(lives) + '░'.repeat(Math.max(0, 3 - lives));
+  }
+
+  // ── Input ──
+  const keys = {};
+  document.addEventListener('keydown', e => {
+    keys[e.code] = true;
+    if (e.code === 'Space') e.preventDefault();
+  });
+  document.addEventListener('keyup', e => { keys[e.code] = false; });
+
+  // Mobile touch zones
+  let touchLeft = false, touchRight = false, touchFire = false;
+  canvas.addEventListener('touchstart', e => {
+    e.preventDefault();
+    for (const t of e.touches) {
+      const x = t.clientX / canvas.getBoundingClientRect().width * W;
+      if (x < W * 0.33) touchLeft = true;
+      else if (x > W * 0.66) touchRight = true;
+      else touchFire = true;
+    }
+  }, { passive: false });
+  canvas.addEventListener('touchend', e => {
+    touchLeft = false; touchRight = false; touchFire = false;
+  });
+
+  let canFire = true;
+
+  // ── Draw functions ──
+  function drawPlayer(p) {
+    ctx.fillStyle = '#ff6600';
+    // Body
+    ctx.fillRect(p.x - 4, p.y + 4, 8, 8);
+    // Wings
+    ctx.fillRect(p.x - p.w/2, p.y + 8, p.w, 4);
+    // Nose
+    ctx.fillRect(p.x - 2, p.y, 4, 6);
+    // Glow
+    ctx.shadowColor = '#ff6600';
+    ctx.shadowBlur = 8;
+    ctx.fillRect(p.x - 2, p.y, 4, 6);
+    ctx.shadowBlur = 0;
+  }
+
+  function drawEnemy(e) {
+    if (!e.alive) return;
+    const a = e.anim;
+    ctx.fillStyle = e.type === 2 ? '#ff9900' : e.type === 1 ? '#ff6600' : '#cc4400';
+
+    if (e.type === 2) {
+      // Top enemy — UFO style
+      ctx.fillRect(e.x - 8, e.y + (a ? 2 : 0), 16, 6);
+      ctx.fillRect(e.x - 4, e.y - 4, 8, 6);
+      ctx.fillRect(e.x - 12, e.y + 6, 24, 4);
+      if (a) { ctx.fillRect(e.x - 10, e.y + 10, 4, 4); ctx.fillRect(e.x + 6, e.y + 10, 4, 4); }
+      else { ctx.fillRect(e.x - 8, e.y + 10, 4, 4); ctx.fillRect(e.x + 4, e.y + 10, 4, 4); }
+    } else if (e.type === 1) {
+      // Mid enemy — crab style
+      ctx.fillRect(e.x - 6, e.y + 2, 12, 8);
+      ctx.fillRect(e.x - 10, e.y + (a ? 4 : 6), 4, 4);
+      ctx.fillRect(e.x + 6, e.y + (a ? 4 : 6), 4, 4);
+      ctx.fillRect(e.x - 4, e.y, 8, 4);
+    } else {
+      // Bottom enemy — squid style
+      ctx.fillRect(e.x - 8, e.y + 4, 16, 8);
+      ctx.fillRect(e.x - 4, e.y, 8, 6);
+      if (a) {
+        ctx.fillRect(e.x - 10, e.y + 10, 4, 4);
+        ctx.fillRect(e.x - 2, e.y + 10, 4, 4);
+        ctx.fillRect(e.x + 6, e.y + 10, 4, 4);
+      } else {
+        ctx.fillRect(e.x - 8, e.y + 10, 4, 4);
+        ctx.fillRect(e.x + 0, e.y + 10, 4, 4);
+        ctx.fillRect(e.x + 8, e.y + 10, 4, 4);
+      }
+    }
+  }
+
+  function drawBullet(b, color) {
+    ctx.fillStyle = color;
+    ctx.shadowColor = color;
+    ctx.shadowBlur = 6;
+    ctx.fillRect(b.x - 1.5, b.y - 6, 3, 10);
+    ctx.shadowBlur = 0;
+  }
+
+  function drawParticles() {
+    for (const p of particles) {
+      const alpha = p.life / p.maxLife;
+      ctx.globalAlpha = alpha;
+      ctx.fillStyle = p.color;
+      ctx.fillRect(p.x - 2, p.y - 2, 4, 4);
+    }
+    ctx.globalAlpha = 1;
+  }
+
+  function drawGrid() {
+    ctx.strokeStyle = 'rgba(255,102,0,0.04)';
+    ctx.lineWidth = 0.5;
+    for (let x = 0; x < W; x += 20) {
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+    }
+    for (let y = 0; y < H; y += 20) {
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+  }
+
+  function drawHUDOverlay() {
+    // Ground line
+    ctx.strokeStyle = 'rgba(255,102,0,0.3)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(0, H - 14); ctx.lineTo(W, H - 14); ctx.stroke();
+    // Corner markers
+    const m = 10;
+    ctx.strokeStyle = 'rgba(255,102,0,0.4)';
+    ctx.lineWidth = 1.5;
+    [[0,0],[W,0],[0,H],[W,H]].forEach(([cx,cy]) => {
+      const sx = cx === 0 ? 1 : -1, sy = cy === 0 ? 1 : -1;
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx + sx*m, cy); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx, cy + sy*m); ctx.stroke();
+    });
+  }
+
+  // ── Game loop ──
+  function loop() {
+    if (state !== 'playing') return;
+    frame++;
+
+    // ── Update ──
+    // Player movement
+    if ((keys['ArrowLeft'] || keys['KeyA'] || touchLeft) && player.x > player.w/2 + 4)
+      player.x -= player.speed;
+    if ((keys['ArrowRight'] || keys['KeyD'] || touchRight) && player.x < W - player.w/2 - 4)
+      player.x += player.speed;
+
+    // Fire
+    if ((keys['Space'] || touchFire) && canFire && bullets.length < 3) {
+      bullets.push({ x: player.x, y: player.y });
+      canFire = false;
+    }
+    if (!keys['Space'] && !touchFire) canFire = true;
+
+    // Player bullets
+    bullets = bullets.filter(b => b.y > 0);
+    for (const b of bullets) b.y -= 8;
+
+    // Enemy movement
+    let hitWall = false;
+    const alive = enemies.filter(e => e.alive);
+    if (alive.length === 0) { nextLevel(); requestAnimationFrame(loop); return; }
+
+    for (const e of alive) {
+      e.x += enemyDir * enemySpeed;
+      if (frame % 30 === 0) e.anim = 1 - e.anim;
+    }
+    for (const e of alive) {
+      if ((e.x + e.w/2 > W - 8 && enemyDir > 0) || (e.x - e.w/2 < 8 && enemyDir < 0)) {
+        hitWall = true; break;
+      }
+    }
+    if (hitWall) {
+      enemyDir *= -1;
+      for (const e of alive) e.y += 10;
+    }
+
+    // Enemy fire
+    fireTimer++;
+    if (fireTimer >= enemyFireRate && alive.length > 0) {
+      fireTimer = 0;
+      const shooter = alive[Math.floor(Math.random() * alive.length)];
+      enemyBullets.push({ x: shooter.x, y: shooter.y });
+    }
+    enemyBullets = enemyBullets.filter(b => b.y < H);
+    for (const b of enemyBullets) b.y += 4;
+
+    // Particles
+    for (const p of particles) {
+      p.x += p.vx; p.y += p.vy; p.life--;
+    }
+    particles = particles.filter(p => p.life > 0);
+
+    // ── Collisions ──
+    // Bullet vs enemy
+    for (const b of bullets) {
+      for (const e of enemies) {
+        if (!e.alive) continue;
+        if (Math.abs(b.x - e.x) < e.w/2 + 2 && Math.abs(b.y - e.y) < e.h/2 + 4) {
+          e.alive = false;
+          b.y = -999;
+          score += e.points * level;
+          explode(e.x, e.y, '#ff6600');
+          updateHUD();
+        }
+      }
+    }
+
+    // Enemy bullet vs player
+    for (const b of enemyBullets) {
+      if (Math.abs(b.x - player.x) < 14 && Math.abs(b.y - player.y) < 14) {
+        b.y = H + 999;
+        lives--;
+        explode(player.x, player.y, '#ff2200');
+        updateHUD();
+        if (lives <= 0) { gameOver(); return; }
+      }
+    }
+
+    // Enemy reaches ground
+    for (const e of alive) {
+      if (e.y > H - 30) { gameOver(); return; }
+    }
+
+    // ── Draw ──
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, W, H);
+    drawGrid();
+    drawHUDOverlay();
+
+    for (const e of enemies) drawEnemy(e);
+    for (const b of bullets) drawBullet(b, '#ff6600');
+    for (const b of enemyBullets) drawBullet(b, '#ff3300');
+    drawParticles();
+    drawPlayer(player);
+
+    // Speed indicator
+    ctx.fillStyle = 'rgba(255,102,0,0.2)';
+    ctx.font = '9px monospace';
+    ctx.fillText(`ENEMIES::${alive.length} ■ LVL::${String(level).padStart(2,'0')}`, 8, 12);
+
+    requestAnimationFrame(loop);
+  }
+
+  function gameOver() {
+    state = 'over';
+    const ov = document.getElementById('overlay');
+    ov.innerHTML = `
+      <h2>SYSTEM_FAILURE</h2>
+      <p>// PROCESS TERMINATED</p>
+      <p style="font-size:18px;letter-spacing:0.15em;color:#ff6600">SCORE :: ${String(score).padStart(6,'0')}</p>
+      <p>LEVEL_REACHED :: ${String(level).padStart(2,'0')}</p>
+      <button onclick="startGame()">[ REINITIALIZE ]</button>
+    `;
+    ov.style.display = 'flex';
+  }
+</script>
+</body>
+</html>
