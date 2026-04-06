@@ -372,11 +372,12 @@ const HUDHeader = ({ onNav }) => {
         padding: "2px 12px",
         fontSize: "10px",
         fontWeight: "bold",
-        letterSpacing: "0.1em",
-        clipPath: "polygon(0 0, 100% 0, 100% 100%, 8px 100%)",
+        letterSpacing: "0.08em",
+        overflow: "hidden",
+        whiteSpace: "nowrap",
       }}>
-        <span>SYS::PUNK_BIT_OS v2.501</span>
-        <span style={{ display: "flex", gap: "16px" }}>
+        <span style={{ flexShrink: 0 }}>SYS::PUNK_BIT_OS</span>
+        <span style={{ display: "flex", gap: "10px", flexShrink: 0 }}>
           <span>SIG:{signal}%</span>
           <span>FRM:{String(frameCount).padStart(4,"0")}</span>
           <span>CLK:{time}</span>
@@ -644,26 +645,60 @@ const App = () => {
           {/* ── About Me ── */}
           <HoverTitle text="ABOUT ME" id="about-me" />
           <section className="my-0">
-            <div className="px-4 text-justify w-full relative">
-              <p className="mb-10 text-sm">
+            <div style={{
+              border: "1px solid #ff6600",
+              borderTop: "none",
+              background: "rgba(0,0,0,0.92)",
+              boxShadow: "4px 6px 24px rgba(255,102,0,0.1), 0 2px 8px rgba(0,0,0,0.8)",
+              marginBottom: "0",
+            }}>
+              {/* Meta bar */}
+              <div style={{
+                borderBottom: "1px solid rgba(255,102,0,0.2)",
+                padding: "4px 16px",
+                fontSize: "9px", color: "#ff6600", opacity: 0.45,
+                letterSpacing: "0.15em", fontFamily: "monospace",
+                display: "flex", justifyContent: "space-between",
+              }}>
+                <span>// USER_PROFILE :: INITIALIZING</span>
+                <span>MODE::CREATIVE_CODER</span>
+              </div>
+
+              <div style={{ padding: "20px 16px" }}>
                 <TypingEffect
                   text={`[init] user.id='Andrés Martínez' | role='multimedia_artist' | origin='Bogotá, Colombia'\n> process.start(creative_coding + generative_systems + visual_storytelling)\n> output: graphic_language.expand(perception.boundaries)\n[protocol] art_as_interface -> hack(perception) -> open(aesthetic.dimensions)`}
                   onComplete={() => setTypingCompleted(true)}
                   skip={skipTyping}
                 />
-              </p>
-              <div className="flex justify-end gap-2 mt-4">
+              </div>
+
+              {/* Action buttons */}
+              <div style={{
+                borderTop: "1px solid rgba(255,102,0,0.2)",
+                padding: "8px 16px",
+                display: "flex", justifyContent: "flex-end", gap: "8px",
+              }}>
                 <button
                   onClick={handleSkip}
-                  className="px-4 py-2 text-sm bg-black text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-black transition-colors"
+                  style={{
+                    padding: "6px 16px", fontSize: "11px", fontFamily: "monospace",
+                    background: "transparent", color: "#ff6600",
+                    border: "1px solid rgba(255,102,0,0.5)", letterSpacing: "0.12em",
+                    cursor: "crosshair",
+                  }}
                 >
-                  Skip
+                  [SKIP]
                 </button>
                 <button
                   onClick={() => scrollTo("projects")}
-                  className="px-4 py-2 text-sm bg-orange-500 text-black border border-orange-500 hover:bg-black hover:text-orange-500 transition-colors"
+                  style={{
+                    padding: "6px 16px", fontSize: "11px", fontFamily: "monospace",
+                    background: "#ff6600", color: "#000",
+                    border: "1px solid #ff6600", letterSpacing: "0.12em",
+                    cursor: "crosshair", fontWeight: "bold",
+                  }}
                 >
-                  Enter
+                  [ENTER]
                 </button>
               </div>
             </div>
@@ -817,15 +852,23 @@ const App = () => {
                             fontSize: "9px", fontFamily: "monospace", letterSpacing: "0.15em",
                             opacity: 0.5, marginBottom: "8px",
                           }}>// VIDEO_FEED :: STREAM_ACTIVE</div>
-                          <iframe
-                            width="100%" height="315"
-                            src={`${project.videoUrl}?rel=0`}
-                            title={`${project.title} video`}
-                            frameBorder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowFullScreen
-                            style={{ width: "100%", boxShadow: "0 8px 32px rgba(0,0,0,0.8)" }}
-                          />
+                          <div style={{
+                            position: "relative", width: "100%",
+                            paddingBottom: "56.25%", height: 0, overflow: "hidden",
+                            boxShadow: "0 8px 32px rgba(0,0,0,0.8)",
+                          }}>
+                            <iframe
+                              src={`${project.videoUrl}?rel=0`}
+                              title={`${project.title} video`}
+                              frameBorder="0"
+                              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                              allowFullScreen
+                              style={{
+                                position: "absolute", top: 0, left: 0,
+                                width: "100%", height: "100%",
+                              }}
+                            />
+                          </div>
                         </div>
                       )}
                     </div>
