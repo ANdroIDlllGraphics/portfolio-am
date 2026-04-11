@@ -6,7 +6,6 @@ const ShaderBackground = () => {
   const canvasRef = useRef(null);
   const animRef = useRef(null);
   const startTimeRef = useRef(Date.now());
-  const mouseRef = useRef({ x: -9999, y: -9999 }); // off-screen default
 
   const vertSrc = `
     attribute vec2 a_position;
@@ -19,7 +18,6 @@ const ShaderBackground = () => {
     precision mediump float;
     uniform float u_time;
     uniform vec2 u_resolution;
-    uniform vec2 u_mouse;   // mouse in pixels, origin bottom-left
 
     float hash(vec2 p) {
       return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453);
@@ -36,17 +34,16 @@ const ShaderBackground = () => {
       return mix(mix(a, b, f.x), mix(c, d, f.x), f.y);
     }
 
-    // Bayer 8x8 dither — more visible pattern
-float dither8(vec2 px) {
-  int x = int(mod(px.x, 4.0));
-  int y = int(mod(px.y, 4.0));
-  float m[16];
-  m[0]=0.0;  m[1]=8.0;  m[2]=2.0;  m[3]=10.0;
-  m[4]=12.0; m[5]=4.0;  m[6]=14.0; m[7]=6.0;
-  m[8]=3.0;  m[9]=11.0; m[10]=1.0; m[11]=9.0;
-  m[12]=15.0;m[13]=7.0; m[14]=13.0;m[15]=5.0;
-  int idx = y * 4 + x;
-  for (int k = 0; k < 16; k++) {
+    float dither8(vec2 px) {
+      int x = int(mod(px.x, 4.0));
+      int y = int(mod(px.y, 4.0));
+      float m[16];
+      m[0]=0.0;  m[1]=8.0;  m[2]=2.0;  m[3]=10.0;
+      m[4]=12.0; m[5]=4.0;  m[6]=14.0; m[7]=6.0;
+      m[8]=3.0;  m[9]=11.0; m[10]=1.0; m[11]=9.0;
+      m[12]=15.0;m[13]=7.0; m[14]=13.0;m[15]=5.0;
+      int idx = y * 4 + x;
+      for (int k = 0; k < 16; k++) {
         if (k == idx) return m[k] / 16.0;
       }
       return 0.0;
@@ -54,45 +51,28 @@ float dither8(vec2 px) {
 
     void main() {
       vec2 uv = gl_FragCoord.xy / u_resolution;
-      // flip Y so mouse coords match
-      vec2 pixUV = vec2(gl_FragCoord.x, u_resolution.y - gl_FragCoord.y);
       float t = u_time * 0.18;
 
-      // Flowing noise field
       vec2 flow = vec2(
         noise(uv * 3.0 + vec2(t, t * 0.5)),
         noise(uv * 3.0 + vec2(t * 0.7, -t))
       );
       float n  = noise(uv * 5.0 + flow * 0.5 + t * 0.2);
       float n2 = noise(uv * 12.0 - flow * 0.4 + t * 0.15);
-
-      // Scanline
       float scanline = sin(gl_FragCoord.y * 2.0) * 0.05;
 
-      // Grid
       float gx = step(0.93, fract(uv.x * 28.0));
       float gy = step(0.93, fract(uv.y * 48.0));
       float grid = max(gx, gy) * 0.18;
 
       float val = n * 0.65 + n2 * 0.45 + scanline;
-
-      // Dither
       float threshold = dither8(gl_FragCoord.xy / 2.0);
-      float dithered = step(threshold, val * 1.1);  // boosted multiplier
-
-      // Mouse proximity — fade dithering within radius
-      float mouseDist = length(pixUV - u_mouse);
-      float mouseRadius = 160.0;
-      // smooth gradient fade: 1.0 = full dither, 0.0 = cleared by mouse
-      float mouseFade = smoothstep(0.0, mouseRadius, mouseDist);
-      dithered *= mouseFade;
+      float dithered = step(threshold, val * 1.1);
 
       vec3 orange = vec3(1.0, 0.42, 0.0);
-      // stronger base brightness so dither is clearly visible
       vec3 col = mix(vec3(0.0), orange * 0.55, dithered);
-      col += orange * grid * mouseFade;
+      col += orange * grid;
 
-      // Vignette
       float vignette = 1.0 - smoothstep(0.35, 1.1, length(uv - 0.5) * 1.8);
       col *= vignette;
 
@@ -134,21 +114,10 @@ float dither8(vec2 px) {
     resize();
     window.addEventListener("resize", resize);
 
-    // Track mouse
-    const onMouseMove = (e) => {
-      mouseRef.current = { x: e.clientX, y: e.clientY };
-    };
-    const onMouseLeave = () => {
-      mouseRef.current = { x: -9999, y: -9999 };
-    };
-    window.addEventListener("mousemove", onMouseMove);
-    window.addEventListener("mouseleave", onMouseLeave);
-
     const render = () => {
       const t = (Date.now() - startTimeRef.current) / 1000;
       gl.uniform1f(gl.getUniformLocation(prog, "u_time"), t);
       gl.uniform2f(gl.getUniformLocation(prog, "u_resolution"), canvas.width, canvas.height);
-      gl.uniform2f(gl.getUniformLocation(prog, "u_mouse"), mouseRef.current.x, mouseRef.current.y);
       gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
       animRef.current = requestAnimationFrame(render);
     };
@@ -157,8 +126,6 @@ float dither8(vec2 px) {
     return () => {
       cancelAnimationFrame(animRef.current);
       window.removeEventListener("resize", resize);
-      window.removeEventListener("mousemove", onMouseMove);
-      window.removeEventListener("mouseleave", onMouseLeave);
     };
   }, []);
 
@@ -166,15 +133,176 @@ float dither8(vec2 px) {
     <canvas
       ref={canvasRef}
       style={{
-        position: "fixed",
-        top: 0, left: 0,
-        width: "100%",
-        height: "100%",
-        zIndex: 0,
-        pointerEvents: "none",
-        opacity: 1,
+        position: "fixed", top: 0, left: 0,
+        width: "100%", height: "100%",
+        zIndex: 0, pointerEvents: "none", opacity: 1,
       }}
     />
+  );
+};
+
+// ─── Custom Cursor ────────────────────────────────────────────────────────
+const CustomCursor = () => {
+  const [pos, setPos] = useState({ x: -100, y: -100 });
+  const [clicked, setClicked] = useState(false);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const onMove = (e) => {
+      setPos({ x: e.clientX, y: e.clientY });
+      setVisible(true);
+    };
+    const onLeave = () => setVisible(false);
+    const onDown = () => {
+      setClicked(true);
+      setTimeout(() => setClicked(false), 300);
+    };
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseleave", onLeave);
+    window.addEventListener("mousedown", onDown);
+    return () => {
+      window.removeEventListener("mousemove", onMove);
+      window.removeEventListener("mouseleave", onLeave);
+      window.removeEventListener("mousedown", onDown);
+    };
+  }, []);
+
+  return (
+    <div style={{
+      position: "fixed",
+      left: pos.x,
+      top: pos.y,
+      width: clicked ? 36 : 20,
+      height: clicked ? 36 : 20,
+      borderRadius: "50%",
+      transform: "translate(-50%, -50%)",
+      mixBlendMode: "difference",
+      backgroundColor: "#ff6600",
+      pointerEvents: "none",
+      zIndex: 9999,
+      opacity: visible ? 1 : 0,
+      transition: "width 0.15s ease, height 0.15s ease, opacity 0.2s",
+    }} />
+  );
+};
+
+// ─── Boot Screen ──────────────────────────────────────────────────────────
+const bootLines = [
+  "PUNK_BIT_OS v2.501 — INITIALIZING...",
+  "▶ MOUNTING SHADER_ENGINE............. OK",
+  "▶ LOADING WEBGL_CONTEXT.............. OK",
+  "▶ CALIBRATING DITHER_MATRIX.......... OK",
+  "▶ ESTABLISHING NODE_CONNECTION....... OK",
+  "▶ LOADING PORTFOLIO_INDEX............ OK",
+  "▶ VERIFYING VISUAL_FEED_01........... OK",
+  "▶ ORIGIN :: BOGOTÁ_CO // 4.7110°N 74.0721°W",
+  "▶ ALL SYSTEMS NOMINAL",
+  "",
+  "WELCOME, USER.",
+];
+
+const BootScreen = ({ onDone }) => {
+  const [lines, setLines] = useState([]);
+  const [barProgress, setBarProgress] = useState(0);
+  const [fading, setFading] = useState(false);
+
+  useEffect(() => {
+    let i = 0;
+    const interval = setInterval(() => {
+      if (i < bootLines.length) {
+        setLines(prev => [...prev, bootLines[i]]);
+        setBarProgress(Math.round((i / (bootLines.length - 1)) * 100));
+        i++;
+      } else {
+        clearInterval(interval);
+        setTimeout(() => {
+          setFading(true);
+          setTimeout(onDone, 700);
+        }, 400);
+      }
+    }, 220);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <motion.div
+      animate={{ opacity: fading ? 0 : 1 }}
+      transition={{ duration: 0.7 }}
+      style={{
+        position: "fixed", inset: 0,
+        background: "#000",
+        zIndex: 9998,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        fontFamily: "monospace",
+      }}
+    >
+      {/* CRT scanlines on boot */}
+      <div style={{
+        position: "absolute", inset: 0, pointerEvents: "none",
+        backgroundImage: "repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.1) 2px, rgba(0,0,0,0.1) 4px)",
+      }} />
+
+      <div style={{ width: "min(480px, 90vw)", position: "relative", zIndex: 1 }}>
+        {/* Top bar */}
+        <div style={{
+          background: "#ff6600", color: "#000",
+          padding: "3px 12px", fontSize: "10px", fontWeight: "bold",
+          letterSpacing: "0.15em", marginBottom: "0",
+          display: "flex", justifyContent: "space-between",
+        }}>
+          <span>SYS::BOOT_SEQUENCE</span>
+          <span>{new Date().toTimeString().slice(0,8)}</span>
+        </div>
+
+        {/* Terminal box */}
+        <div style={{
+          border: "1px solid #ff6600", borderTop: "none",
+          padding: "20px 16px",
+          minHeight: "280px",
+          boxShadow: "0 0 40px rgba(255,102,0,0.15)",
+        }}>
+          {lines.map((line, i) => (
+            <div key={i} style={{
+              fontSize: "11px", color: line === "WELCOME, USER." ? "#ff6600" : "rgba(255,102,0,0.7)",
+              letterSpacing: "0.08em", lineHeight: "1.9",
+              fontWeight: line === "WELCOME, USER." ? "bold" : "normal",
+              fontSize: line === "WELCOME, USER." ? "14px" : "11px",
+            }}>
+              {line}
+            </div>
+          ))}
+          {/* Blinking cursor */}
+          <motion.span
+            animate={{ opacity: [1, 0] }}
+            transition={{ repeat: Infinity, duration: 0.6 }}
+            style={{ color: "#ff6600", fontSize: "14px" }}
+          >█</motion.span>
+        </div>
+
+        {/* Progress bar */}
+        <div style={{
+          border: "1px solid #ff6600", borderTop: "none",
+          padding: "6px 12px",
+          display: "flex", alignItems: "center", gap: "10px",
+        }}>
+          <span style={{ fontSize: "9px", color: "#ff6600", opacity: 0.5, letterSpacing: "0.12em", flexShrink: 0 }}>
+            LOAD
+          </span>
+          <div style={{ flex: 1, height: "4px", background: "rgba(255,102,0,0.15)" }}>
+            <motion.div
+              style={{ height: "100%", background: "#ff6600", width: `${barProgress}%` }}
+              transition={{ duration: 0.2 }}
+            />
+          </div>
+          <span style={{ fontSize: "9px", color: "#ff6600", opacity: 0.5, letterSpacing: "0.12em", flexShrink: 0 }}>
+            {barProgress}%
+          </span>
+        </div>
+      </div>
+    </motion.div>
   );
 };
 
@@ -518,6 +646,7 @@ const App = () => {
   const [expandedProject, setExpandedProject] = useState(null);
   const [typingCompleted, setTypingCompleted] = useState(false);
   const [skipTyping, setSkipTyping] = useState(false);
+  const [booted, setBooted] = useState(false);
 
   const buttons = ["System", "Contact"];
 
@@ -624,6 +753,12 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-black text-orange-500 font-mono px-0 py-0 relative">
+      {/* Boot screen */}
+      {!booted && <BootScreen onDone={() => setBooted(true)} />}
+
+      {/* Custom cursor */}
+      <CustomCursor />
+
       {/* WebGL Shader Layer */}
       <ShaderBackground />
 
@@ -1043,24 +1178,15 @@ const App = () => {
         @media (min-width: 640px) { .typing-container { max-width: 80%; } }
         @media (min-width: 1024px) { .typing-container { max-width: 60%; } }
 
-        /* Custom cursor */
-        body { cursor: crosshair; }
-        a, button { cursor: crosshair; }
+        /* Custom cursor — handled by component */
+        body { cursor: none; }
+        a, button { cursor: none; }
       `}</style>
     </div>
   );
 };
 
 export default App;
-
-
-
-
-
-
-
-
-
 
 
 
