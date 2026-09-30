@@ -195,7 +195,7 @@ const bootLines = [
   "▶ ESTABLISHING NODE_CONNECTION....... OK",
   "▶ LOADING PORTFOLIO_INDEX............ OK",
   "▶ VERIFYING VISUAL_FEED_01........... OK",
-  "▶ ORIGIN :: BOGOTÁ_CO // 4.7110°N 74.0721°W",
+  "▶ ORIGIN :: _CO // 4.7110°N 74.0721°W",
   "▶ ALL SYSTEMS NOMINAL",
   "",
   "WELCOME, USER.",
@@ -678,7 +678,7 @@ const App = () => {
       tool: "TOUCHDESIGNER + RESOLUME",
       type: "LIVE_PERFORMANCE",
       subtitle: "Real-time Visuals — Happy Song Performance",
-      description: "Real-time generative visuals designed for Bring Me The Horizon's performance of Happy Song during their live show in Bogotá. The visual system was built to respond to the energy and structure of the track, creating a dynamic audiovisual environment that amplified the performance's impact.",
+      description: "Real-time generative visuals designed for Bring Me The Horizon's performance of Happy Song during their live show. The visual system was built to respond to the energy and structure of the track, creating a dynamic audiovisual environment that amplified the performance's impact.",
       gifs: [
         { url: "/BMTH_001.gif", alt: "BMTH visual 1" },
         { url: "/BMTH_002.gif", alt: "BMTH visual 2" },
@@ -801,7 +801,7 @@ const App = () => {
 
               <div style={{ padding: "20px 16px" }}>
                 <TypingEffect
-                  text={`[init] user.id='Andrés Martínez' | role='multimedia_artist' | origin='Bogotá, Colombia'\n> process.start(creative_coding + generative_systems + visual_storytelling)\n> output: graphic_language.expand(perception.boundaries)\n[protocol] art_as_interface -> hack(perception) -> open(aesthetic.dimensions)`}
+                  text={`[init] user.id='Andrés Martínez' | role='multimedia_artist' | origin='Colombia'\n> process.start(creative_coding + generative_systems + visual_storytelling)\n> output: graphic_language.expand(perception.boundaries)\n[protocol] art_as_interface -> hack(perception) -> open(aesthetic.dimensions)`}
                   onComplete={() => setTypingCompleted(true)}
                   skip={skipTyping}
                 />
@@ -1106,7 +1106,7 @@ const App = () => {
                 letterSpacing: "0.12em", fontFamily: "monospace",
                 display: "flex", justifyContent: "space-between",
               }}>
-                <span>ORIGIN::BOGOTÁ_CO ■ 4.7110°N 74.0721°W</span>
+                <span>ORIGIN:: ■ 4.7110°N 74.0721°W</span>
                 <span>ENCRYPT::NONE ■ HANDSHAKE::OPEN</span>
               </div>
             </div>
