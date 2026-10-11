@@ -69,12 +69,13 @@ const ShaderBackground = () => {
       float threshold = dither8(gl_FragCoord.xy / 2.0);
       float dithered = step(threshold, val * 1.1);
 
-      vec3 orange = vec3(1.0, 0.42, 0.0);
-      vec3 col = mix(vec3(0.0), orange * 0.55, dithered);
-      col += orange * grid;
+      vec3 blue = vec3(0.12, 0.23, 1.0);
+      vec3 white = vec3(0.96, 0.97, 1.0);
+      vec3 col = mix(white, blue, dithered * 0.5);
+      col = mix(col, blue, grid * 1.2);
 
       float vignette = 1.0 - smoothstep(0.35, 1.1, length(uv - 0.5) * 1.8);
-      col *= vignette;
+      col = mix(blue * 0.8, col, vignette);
 
       gl_FragColor = vec4(col, 1.0);
     }
@@ -177,7 +178,7 @@ const CustomCursor = () => {
       borderRadius: "50%",
       transform: "translate(-50%, -50%)",
       mixBlendMode: "difference",
-      backgroundColor: "#ff6600",
+      backgroundColor: "#1f3bff",
       pointerEvents: "none",
       zIndex: 9999,
       opacity: visible ? 1 : 0,
@@ -230,7 +231,7 @@ const BootScreen = ({ onDone }) => {
       transition={{ duration: 0.7 }}
       style={{
         position: "fixed", inset: 0,
-        background: "#000",
+        background: "#f2f5ff",
         zIndex: 9998,
         display: "flex",
         flexDirection: "column",
@@ -248,7 +249,7 @@ const BootScreen = ({ onDone }) => {
       <div style={{ width: "min(480px, 90vw)", position: "relative", zIndex: 1 }}>
         {/* Top bar */}
         <div style={{
-          background: "#ff6600", color: "#000",
+          background: "#1f3bff", color: "#fff",
           padding: "3px 12px", fontSize: "10px", fontWeight: "bold",
           letterSpacing: "0.15em", marginBottom: "0",
           display: "flex", justifyContent: "space-between",
@@ -259,14 +260,14 @@ const BootScreen = ({ onDone }) => {
 
         {/* Terminal box */}
         <div style={{
-          border: "1px solid #ff6600", borderTop: "none",
+          border: "1px solid #1f3bff", borderTop: "none",
           padding: "20px 16px",
           minHeight: "280px",
-          boxShadow: "0 0 40px rgba(255,102,0,0.15)",
+          boxShadow: "0 0 40px rgba(31,59,255,0.15)",
         }}>
           {lines.map((line, i) => (
             <div key={i} style={{
-              fontSize: "11px", color: line === "WELCOME, USER." ? "#ff6600" : "rgba(255,102,0,0.7)",
+              fontSize: "11px", color: line === "WELCOME, USER." ? "#1f3bff" : "rgba(31,59,255,0.7)",
               letterSpacing: "0.08em", lineHeight: "1.9",
               fontWeight: line === "WELCOME, USER." ? "bold" : "normal",
               fontSize: line === "WELCOME, USER." ? "14px" : "11px",
@@ -278,26 +279,26 @@ const BootScreen = ({ onDone }) => {
           <motion.span
             animate={{ opacity: [1, 0] }}
             transition={{ repeat: Infinity, duration: 0.6 }}
-            style={{ color: "#ff6600", fontSize: "14px" }}
+            style={{ color: "#1f3bff", fontSize: "14px" }}
           >█</motion.span>
         </div>
 
         {/* Progress bar */}
         <div style={{
-          border: "1px solid #ff6600", borderTop: "none",
+          border: "1px solid #1f3bff", borderTop: "none",
           padding: "6px 12px",
           display: "flex", alignItems: "center", gap: "10px",
         }}>
-          <span style={{ fontSize: "9px", color: "#ff6600", opacity: 0.5, letterSpacing: "0.12em", flexShrink: 0 }}>
+          <span style={{ fontSize: "9px", color: "#1f3bff", opacity: 0.5, letterSpacing: "0.12em", flexShrink: 0 }}>
             LOAD
           </span>
-          <div style={{ flex: 1, height: "4px", background: "rgba(255,102,0,0.15)" }}>
+          <div style={{ flex: 1, height: "4px", background: "rgba(31,59,255,0.15)" }}>
             <motion.div
-              style={{ height: "100%", background: "#ff6600", width: `${barProgress}%` }}
+              style={{ height: "100%", background: "#1f3bff", width: `${barProgress}%` }}
               transition={{ duration: 0.2 }}
             />
           </div>
-          <span style={{ fontSize: "9px", color: "#ff6600", opacity: 0.5, letterSpacing: "0.12em", flexShrink: 0 }}>
+          <span style={{ fontSize: "9px", color: "#1f3bff", opacity: 0.5, letterSpacing: "0.12em", flexShrink: 0 }}>
             {barProgress}%
           </span>
         </div>
@@ -343,7 +344,7 @@ const GlitchText = ({ text, className = "", style = {} }) => {
           }}>{text}</span>
           <span style={{
             position: "absolute", top: "2px", left: "1px",
-            color: "#ff6600", opacity: 0.4, clipPath: "inset(8% 0 78% 0)",
+            color: "#1f3bff", opacity: 0.4, clipPath: "inset(8% 0 78% 0)",
             mixBlendMode: "screen",
           }}>{text}</span>
         </>
@@ -396,7 +397,7 @@ const TypingEffect = ({ text, onComplete, skip }) => {
         <span style={{
           display: "inline-block",
           width: "1ch",
-          backgroundColor: cursorVisible ? "#ff6600" : "transparent",
+          backgroundColor: cursorVisible ? "#1f3bff" : "transparent",
         }}>█</span>
       )}
     </div>
@@ -407,15 +408,15 @@ const TypingEffect = ({ text, onComplete, skip }) => {
 const HoverTitle = ({ id, text, bg = false, style }) => (
   <motion.div
     id={id}
-    className={`w-full ${bg ? "bg-orange-500 text-black" : "bg-black text-orange-500"} py-2 mb-0`}
+    className={`w-full ${bg ? "bg-[#1f3bff] text-white" : "bg-white text-[#1f3bff]"} py-2 mb-0`}
     style={{
       position: "relative", zIndex: 2,
       boxShadow: bg
-        ? "0 4px 24px rgba(255,102,0,0.25), 0 2px 8px rgba(0,0,0,0.6)"
+        ? "0 4px 24px rgba(31,59,255,0.25), 0 2px 8px rgba(0,0,0,0.6)"
         : "0 4px 16px rgba(0,0,0,0.7)",
       ...style,
     }}
-    whileHover={!bg ? { backgroundColor: "#ff6600", color: "#000" } : {}}
+    whileHover={!bg ? { backgroundColor: "#1f3bff", color: "#fff" } : {}}
     transition={{ duration: 0.2 }}
   >
     <div className="max-w-5xl mx-auto px-4 font-mono uppercase h-12 flex items-center text-xl font-bold tracking-widest">
@@ -436,7 +437,7 @@ const ScanlineOverlay = () => (
 // ─── Ticker ────────────────────────────────────────────────────────────────
 const Ticker = ({ text }) => (
   <div style={{
-    overflow: "hidden", background: "#ff6600", color: "#000",
+    overflow: "hidden", background: "#1f3bff", color: "#fff",
     fontFamily: "monospace", fontSize: "12px", fontWeight: "bold",
     padding: "4px 0", position: "relative", zIndex: 2,
   }}>
@@ -495,8 +496,8 @@ const HUDHeader = ({ onNav }) => {
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        background: "#ff6600",
-        color: "#000",
+        background: "#1f3bff",
+        color: "#fff",
         padding: "2px 12px",
         fontSize: "10px",
         fontWeight: "bold",
@@ -516,16 +517,16 @@ const HUDHeader = ({ onNav }) => {
       <div style={{
         display: "flex",
         alignItems: "stretch",
-        border: "1px solid #ff6600",
+        border: "1px solid #1f3bff",
         borderTop: "none",
-        background: "rgba(0,0,0,0.92)",
+        background: "rgba(255,255,255,0.55)",
         clipPath: "polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%)",
       }}>
 
         {/* Logo block */}
         <div style={{
-          background: "#ff6600",
-          color: "#000",
+          background: "#1f3bff",
+          color: "#fff",
           padding: "0 20px",
           display: "flex",
           flexDirection: "column",
@@ -549,18 +550,18 @@ const HUDHeader = ({ onNav }) => {
           flexDirection: "column",
           justifyContent: "center",
           padding: "6px 16px",
-          borderLeft: "1px solid #ff6600",
-          borderRight: "1px solid #ff6600",
+          borderLeft: "1px solid #1f3bff",
+          borderRight: "1px solid #1f3bff",
           gap: "3px",
         }}>
-          <div style={{ fontSize: "9px", color: "#ff6600", opacity: 0.6, letterSpacing: "0.15em" }}>
+          <div style={{ fontSize: "9px", color: "#1f3bff", opacity: 0.6, letterSpacing: "0.15em" }}>
             LOC::4.7110°N 74.0721°W // BOGOTÁ_CO // NODE_ACTIVE
           </div>
-          <div style={{ fontSize: "10px", color: "#ff6600", letterSpacing: "0.1em", display: "flex", alignItems: "center", gap: "8px" }}>
+          <div style={{ fontSize: "10px", color: "#1f3bff", letterSpacing: "0.1em", display: "flex", alignItems: "center", gap: "8px" }}>
             <span style={{
               display: "inline-block", width: "6px", height: "6px",
-              background: "#ff6600", borderRadius: "50%",
-              boxShadow: "0 0 6px #ff6600",
+              background: "#1f3bff", borderRadius: "50%",
+              boxShadow: "0 0 6px #1f3bff",
               animation: "pulse 1.2s ease-in-out infinite",
             }} />
             {statusMsg}
@@ -570,7 +571,7 @@ const HUDHeader = ({ onNav }) => {
             {[3,5,7,9,7,5,8,6,4,7,9,5].map((h, i) => (
               <div key={i} style={{
                 width: "3px", height: `${h}px`,
-                background: "#ff6600",
+                background: "#1f3bff",
                 opacity: 0.3 + (i % 3) * 0.2,
               }} />
             ))}
@@ -586,10 +587,10 @@ const HUDHeader = ({ onNav }) => {
               onMouseLeave={() => setHoveredBtn(null)}
               onClick={() => onNav(item.target)}
               style={{
-                background: hoveredBtn === i ? "#ff6600" : "transparent",
-                color: hoveredBtn === i ? "#000" : "#ff6600",
+                background: hoveredBtn === i ? "#1f3bff" : "transparent",
+                color: hoveredBtn === i ? "#fff" : "#1f3bff",
                 border: "none",
-                borderLeft: "1px solid #ff6600",
+                borderLeft: "1px solid #1f3bff",
                 padding: "0 20px",
                 cursor: "crosshair",
                 fontFamily: "monospace",
@@ -618,13 +619,13 @@ const HUDHeader = ({ onNav }) => {
         justifyContent: "space-between",
         padding: "2px 12px",
         fontSize: "9px",
-        color: "#ff6600",
+        color: "#1f3bff",
         opacity: 0.5,
         letterSpacing: "0.1em",
-        borderLeft: "1px solid #ff6600",
-        borderRight: "1px solid #ff6600",
-        borderBottom: "1px solid #ff6600",
-        background: "rgba(0,0,0,0.6)",
+        borderLeft: "1px solid #1f3bff",
+        borderRight: "1px solid #1f3bff",
+        borderBottom: "1px solid #1f3bff",
+        background: "rgba(255,255,255,0.55)",
       }}>
         <span>■ GLSL_SHADER::ACTIVE ■ DITHER::8x8 ■ WEBGL::ENABLED</span>
         <span>ORIGIN::BOGOTÁ ■ OUTPUT::SCREEN</span>
@@ -632,7 +633,7 @@ const HUDHeader = ({ onNav }) => {
 
       <style>{`
         @keyframes pulse {
-          0%, 100% { opacity: 1; box-shadow: 0 0 6px #ff6600; }
+          0%, 100% { opacity: 1; box-shadow: 0 0 6px #1f3bff; }
           50% { opacity: 0.3; box-shadow: none; }
         }
       `}</style>
@@ -752,7 +753,7 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen bg-black text-orange-500 font-mono px-0 py-0 relative">
+    <div className="min-h-screen bg-white text-[#1f3bff] font-mono px-0 py-0 relative">
       {/* Boot screen */}
       {!booted && <BootScreen onDone={() => setBooted(true)} />}
 
@@ -774,24 +775,24 @@ const App = () => {
 
           {/* ── Hero GIF ── */}
           <div className="w-full">
-            <img src="/spirals.gif" alt="Hero animation" className="w-full h-auto" />
+            <img src="/spirals.gif" alt="Hero animation" className="w-full h-auto" style={{ filter: "invert(1)" }} />
           </div>
 
           {/* ── About Me ── */}
           <HoverTitle text="ABOUT ME" id="about-me" />
           <section className="my-0">
             <div style={{
-              border: "1px solid #ff6600",
+              border: "1px solid #1f3bff",
               borderTop: "none",
-              background: "rgba(0,0,0,0.92)",
-              boxShadow: "4px 6px 24px rgba(255,102,0,0.1), 0 2px 8px rgba(0,0,0,0.8)",
+              background: "rgba(255,255,255,0.55)",
+              boxShadow: "4px 6px 24px rgba(31,59,255,0.1), 0 2px 8px rgba(0,0,0,0.8)",
               marginBottom: "0",
             }}>
               {/* Meta bar */}
               <div style={{
-                borderBottom: "1px solid rgba(255,102,0,0.2)",
+                borderBottom: "1px solid rgba(31,59,255,0.2)",
                 padding: "4px 16px",
-                fontSize: "9px", color: "#ff6600", opacity: 0.45,
+                fontSize: "9px", color: "#1f3bff", opacity: 0.45,
                 letterSpacing: "0.15em", fontFamily: "monospace",
                 display: "flex", justifyContent: "space-between",
               }}>
@@ -809,7 +810,7 @@ const App = () => {
 
               {/* Action buttons */}
               <div style={{
-                borderTop: "1px solid rgba(255,102,0,0.2)",
+                borderTop: "1px solid rgba(31,59,255,0.2)",
                 padding: "8px 16px",
                 display: "flex", justifyContent: "flex-end", gap: "8px",
               }}>
@@ -817,8 +818,8 @@ const App = () => {
                   onClick={handleSkip}
                   style={{
                     padding: "6px 16px", fontSize: "11px", fontFamily: "monospace",
-                    background: "transparent", color: "#ff6600",
-                    border: "1px solid rgba(255,102,0,0.5)", letterSpacing: "0.12em",
+                    background: "transparent", color: "#1f3bff",
+                    border: "1px solid rgba(31,59,255,0.5)", letterSpacing: "0.12em",
                     cursor: "crosshair",
                   }}
                 >
@@ -828,8 +829,8 @@ const App = () => {
                   onClick={() => scrollTo("projects")}
                   style={{
                     padding: "6px 16px", fontSize: "11px", fontFamily: "monospace",
-                    background: "#ff6600", color: "#000",
-                    border: "1px solid #ff6600", letterSpacing: "0.12em",
+                    background: "#1f3bff", color: "#fff",
+                    border: "1px solid #1f3bff", letterSpacing: "0.12em",
                     cursor: "crosshair", fontWeight: "bold",
                   }}
                 >
@@ -843,10 +844,10 @@ const App = () => {
           {/* ── Projects ── */}
           <HoverTitle text="PROJECTS" id="projects" bg={true} style={{ transform: "translateY(5px)" }} />
           <section
-            className="bg-orange-500 text-black px-0 py-10 flex flex-col justify-end relative"
+            className="bg-[#1f3bff] text-white px-0 py-10 flex flex-col justify-end relative"
             style={{
               marginTop: "-10px",
-              boxShadow: "0 8px 40px 0 rgba(255,102,0,0.18), 0 2px 8px 0 rgba(0,0,0,0.7)",
+              boxShadow: "0 8px 40px 0 rgba(31,59,255,0.18), 0 2px 8px 0 rgba(0,0,0,0.7)",
             }}
           >
             {/* HUD section header */}
@@ -871,22 +872,22 @@ const App = () => {
                       setExpandedProject(expandedProject === project.id ? null : project.id);
                       setTimeout(() => scrollTo(project.id), 100);
                     }}
-                    className="relative bg-black text-orange-500 flex flex-col items-start"
+                    className="relative bg-white text-[#1f3bff] flex flex-col items-start"
                     style={{
                       height: "130px",
                       width: "305px",
                       marginBottom: "20px",
-                      border: "1px solid rgba(255,102,0,0.4)",
+                      border: "1px solid rgba(31,59,255,0.4)",
                       padding: "0",
-                      boxShadow: "4px 6px 24px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,102,0,0.15)",
+                      boxShadow: "4px 6px 24px rgba(0,0,0,0.6), inset 0 0 0 1px rgba(31,59,255,0.15)",
                     }}
-                    whileHover={{ scale: 1.03, boxShadow: "6px 10px 32px rgba(0,0,0,0.8), 0 0 16px rgba(255,102,0,0.3)" }}
+                    whileHover={{ scale: 1.03, boxShadow: "6px 10px 32px rgba(0,0,0,0.8), 0 0 16px rgba(31,59,255,0.3)" }}
                     whileTap={{ scale: 0.97 }}
                     transition={{ duration: 0.18 }}
                   >
                     {/* Card top bar */}
                     <div style={{
-                      width: "100%", background: "#ff6600", color: "#000",
+                      width: "100%", background: "#1f3bff", color: "#fff",
                       padding: "3px 14px", fontSize: "9px", fontFamily: "monospace",
                       letterSpacing: "0.15em", display: "flex", justifyContent: "space-between",
                     }}>
@@ -924,17 +925,18 @@ const App = () => {
                     animate={{ opacity: 1, scaleY: 1 }}
                     exit={{ opacity: 0, scaleY: 0 }}
                     transition={{ duration: 0.35, ease: "easeOut" }}
-                    className="text-orange-500 bg-black px-0 max-w-5xl mx-auto overflow-hidden"
+                    className="text-[#1f3bff] px-0 max-w-5xl mx-auto overflow-hidden"
                     style={{
-                      borderLeft: "2px solid #ff6600",
-                      borderRight: "2px solid #ff6600",
-                      borderBottom: "2px solid #ff6600",
-                      boxShadow: "0 16px 48px rgba(255,102,0,0.12), 0 4px 16px rgba(0,0,0,0.8)",
+                      background: "rgba(255,255,255,0.55)",
+                      borderLeft: "2px solid #1f3bff",
+                      borderRight: "2px solid #1f3bff",
+                      borderBottom: "2px solid #1f3bff",
+                      boxShadow: "0 16px 48px rgba(31,59,255,0.12), 0 4px 16px rgba(0,0,0,0.8)",
                     }}
                   >
                     {/* Project HUD header */}
                     <div style={{
-                      background: "#ff6600", color: "#000",
+                      background: "#1f3bff", color: "#fff",
                       padding: "4px 16px", fontFamily: "monospace", fontSize: "10px",
                       display: "flex", justifyContent: "space-between", letterSpacing: "0.15em",
                     }}>
@@ -947,7 +949,7 @@ const App = () => {
                       <div style={{
                         display: "flex", gap: "24px", marginBottom: "20px",
                         fontSize: "9px", opacity: 0.5, letterSpacing: "0.15em", fontFamily: "monospace",
-                        borderBottom: "1px solid rgba(255,102,0,0.2)", paddingBottom: "12px",
+                        borderBottom: "1px solid rgba(31,59,255,0.2)", paddingBottom: "12px",
                       }}>
                         <span>CLIENT::{project.client}</span>
                         <span>TOOL::{project.tool}</span>
@@ -1013,14 +1015,14 @@ const App = () => {
           <section id="contact" className="mt-0 mb-0">
             {/* HUD Contact Panel */}
             <div style={{
-              border: "1px solid #ff6600",
-              background: "rgba(0,0,0,0.92)",
-              boxShadow: "4px 6px 32px rgba(255,102,0,0.12), 0 2px 12px rgba(0,0,0,0.8)",
+              border: "1px solid #1f3bff",
+              background: "rgba(255,255,255,0.55)",
+              boxShadow: "4px 6px 32px rgba(31,59,255,0.12), 0 2px 12px rgba(0,0,0,0.8)",
               marginBottom: "48px",
             }}>
               {/* Panel top bar */}
               <div style={{
-                background: "#ff6600", color: "#000",
+                background: "#1f3bff", color: "#fff",
                 padding: "3px 16px", fontFamily: "monospace", fontSize: "10px",
                 display: "flex", justifyContent: "space-between", letterSpacing: "0.15em",
               }}>
@@ -1031,7 +1033,7 @@ const App = () => {
               <div style={{ padding: "24px" }}>
                 {/* Status line */}
                 <div style={{
-                  fontSize: "9px", color: "#ff6600", opacity: 0.5,
+                  fontSize: "9px", color: "#1f3bff", opacity: 0.5,
                   letterSpacing: "0.15em", marginBottom: "16px", fontFamily: "monospace",
                 }}>
                   AVAILABILITY::FREELANCE ■ SERVICES::LIVE_VISUALS + GENERATIVE_ART + INSTALLATION
@@ -1044,9 +1046,9 @@ const App = () => {
 
                 {/* Divider */}
                 <div style={{
-                  borderTop: "1px solid rgba(255,102,0,0.2)",
+                  borderTop: "1px solid rgba(31,59,255,0.2)",
                   marginBottom: "20px", paddingTop: "16px",
-                  fontSize: "9px", color: "#ff6600", opacity: 0.4,
+                  fontSize: "9px", color: "#1f3bff", opacity: 0.4,
                   letterSpacing: "0.15em", fontFamily: "monospace",
                 }}>
                   // NETWORK_LINKS :: SELECT_CHANNEL
@@ -1075,16 +1077,16 @@ const App = () => {
                         display: "flex", flexDirection: "column",
                         padding: "10px 14px",
                         background: "transparent",
-                        border: "1px solid rgba(255,102,0,0.35)",
-                        color: "#ff6600", textDecoration: "none",
+                        border: "1px solid rgba(31,59,255,0.35)",
+                        color: "#1f3bff", textDecoration: "none",
                         fontFamily: "monospace",
                         boxShadow: "2px 3px 12px rgba(0,0,0,0.5)",
                         gap: "3px",
                       }}
                       whileHover={{
-                        backgroundColor: "#ff6600",
-                        color: "#000",
-                        boxShadow: "4px 6px 20px rgba(255,102,0,0.25)",
+                        backgroundColor: "#1f3bff",
+                        color: "#fff",
+                        boxShadow: "4px 6px 20px rgba(31,59,255,0.25)",
                       }}
                       transition={{ duration: 0.15 }}
                     >
@@ -1100,9 +1102,9 @@ const App = () => {
 
               {/* Panel bottom bar */}
               <div style={{
-                borderTop: "1px solid rgba(255,102,0,0.2)",
+                borderTop: "1px solid rgba(31,59,255,0.2)",
                 padding: "4px 16px",
-                fontSize: "9px", color: "#ff6600", opacity: 0.35,
+                fontSize: "9px", color: "#1f3bff", opacity: 0.35,
                 letterSpacing: "0.12em", fontFamily: "monospace",
                 display: "flex", justifyContent: "space-between",
               }}>
@@ -1114,14 +1116,14 @@ const App = () => {
         </div>
 
         {/* Bottom GIF */}
-        <img src="/bg-af.gif" alt="background animation" className="w-full mt-0" />
+        <img src="/bg-af.gif" alt="background animation" className="w-full mt-0" style={{ filter: "invert(1)" }} />
 
         {/* Game button */}
         <div style={{
           display: "flex", justifyContent: "center", alignItems: "center",
-          padding: "20px", background: "rgba(0,0,0,0.95)",
-          borderTop: "1px solid rgba(255,102,0,0.3)",
-          borderBottom: "1px solid rgba(255,102,0,0.3)",
+          padding: "20px", background: "rgba(255,255,255,0.55)",
+          borderTop: "1px solid rgba(31,59,255,0.3)",
+          borderBottom: "1px solid rgba(31,59,255,0.3)",
         }}>
           <motion.a
             href="/game.html"
@@ -1130,12 +1132,12 @@ const App = () => {
             style={{
               display: "flex", flexDirection: "column", alignItems: "center",
               gap: "4px", padding: "12px 32px",
-              border: "1px solid #ff6600", background: "transparent",
-              color: "#ff6600", fontFamily: "monospace", textDecoration: "none",
+              border: "1px solid #1f3bff", background: "transparent",
+              color: "#1f3bff", fontFamily: "monospace", textDecoration: "none",
               boxShadow: "4px 4px 20px rgba(0,0,0,0.6)",
               cursor: "crosshair",
             }}
-            whileHover={{ backgroundColor: "#ff6600", color: "#000", boxShadow: "0 0 24px rgba(255,102,0,0.4)" }}
+            whileHover={{ backgroundColor: "#1f3bff", color: "#fff", boxShadow: "0 0 24px rgba(31,59,255,0.4)" }}
             transition={{ duration: 0.15 }}
           >
             <span style={{ fontSize: "9px", opacity: 0.6, letterSpacing: "0.2em" }}>[MINIGAME::ACTIVE]</span>
@@ -1151,27 +1153,27 @@ const App = () => {
 
         /* Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: black; }
+        ::-webkit-scrollbar-track { background: #f2f5ff; }
         ::-webkit-scrollbar-thumb {
-          background-color: #ff6600;
-          border: 2px solid black;
+          background-color: #1f3bff;
+          border: 2px solid #f2f5ff;
         }
-        ::-webkit-scrollbar-thumb:hover { background-color: #e65c00; }
-        html { scrollbar-width: thin; scrollbar-color: #ff6600 black; }
+        ::-webkit-scrollbar-thumb:hover { background-color: #1530c8; }
+        html { scrollbar-width: thin; scrollbar-color: #1f3bff #f2f5ff; }
 
         /* Typing container */
         .typing-container {
           font-family: monospace;
           white-space: pre-wrap;
           display: block;
-          background-color: rgb(0,0,0);
-          color: #ff6600;
+          background-color: rgba(255,255,255,0.55);
+          color: #1f3bff;
           padding: 16px;
-          border: 2px solid #ff6600;
+          border: 2px solid #1f3bff;
           max-width: 100%;
           overflow: hidden;
           margin: 0 auto;
-          box-shadow: 4px 6px 24px rgba(255,102,0,0.15), 0 2px 8px rgba(0,0,0,0.8);
+          box-shadow: 4px 6px 24px rgba(31,59,255,0.15), 0 2px 8px rgba(0,0,0,0.8);
         }
         @media (min-width: 640px) { .typing-container { max-width: 80%; } }
         @media (min-width: 1024px) { .typing-container { max-width: 60%; } }
