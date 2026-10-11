@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CyberDolls — Andro / punk_bit</title>
+  <meta name="description" content="CyberDolls (2024) by Andro / punk_bit: a real-time generative series about digital identity, constructed beauty and visual corruption. AI, dithering, displacement and pixel layers in TouchDesigner/GLSL." />
+  <link rel="canonical" href="https://punkbit.art/cyberdolls" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Andro / punk_bit" />
+  <meta property="og:title" content="CyberDolls — Andro / punk_bit" />
+  <meta property="og:description" content="A real-time generative series about digital identity, constructed beauty and visual corruption. TouchDesigner + GLSL, 2024." />
+  <meta property="og:image" content="https://punkbit.art/cyberdolls_01.jpg" />
+  <meta property="og:image:width" content="1080" />
+  <meta property="og:image:height" content="1080" />
+  <meta property="og:url" content="https://punkbit.art/cyberdolls" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="CyberDolls — Andro / punk_bit" />
+  <meta name="twitter:description" content="A real-time generative series about digital identity, constructed beauty and visual corruption." />
+  <meta name="twitter:image" content="https://punkbit.art/cyberdolls_01.jpg" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VisualArtwork",
+    "name": "CyberDolls",
+    "creator": { "@type": "Person", "name": "Johann Jair Andrés Martínez", "alternateName": ["Andro", "punk_bit"], "url": "https://punkbit.art" },
+    "dateCreated": "2024",
+    "artMedium": "Real-time generative animation (TouchDesigner, GLSL)",
+    "image": "https://punkbit.art/cyberdolls_01.jpg",
+    "url": "https://punkbit.art/cyberdolls"
+  }
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root { --o: #ff6600; --o2: #ff8a3d; --dim: #9a5320; --line: rgba(255,102,0,.35); --faint: rgba(255,102,0,.15); --panel: rgba(0,0,0,.9); --cut: 14px; }
+    * { box-sizing: border-box; }
+    html { scrollbar-width: thin; scrollbar-color: var(--o) #000; scroll-behavior: smooth; }
+    body { margin: 0; background: #000; color: var(--o); font-family: "JetBrains Mono", "Courier New", ui-monospace, monospace; font-size: 14px; line-height: 1.75; }
+    ::selection { background: var(--o); color: #000; }
+    a { color: var(--o); }
+    #bg { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+    .scan { position: fixed; inset: 0; z-index: 1; pointer-events: none; background: repeating-linear-gradient(0deg, transparent 0 2px, rgba(0,0,0,.14) 2px 4px); }
+    .vig { position: fixed; inset: 0; z-index: 1; pointer-events: none; background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.7) 100%); }
+    .page { position: relative; z-index: 2; max-width: 68rem; margin: 0 auto; padding: 0 1rem 2rem; }
+
+    /* HUD header */
+    .hud-top { display: flex; justify-content: space-between; gap: 1rem; background: var(--o); color: #000; font-size: 10px; font-weight: 700; letter-spacing: .08em; padding: 2px 12px; white-space: nowrap; overflow: hidden; }
+    .hud-top span:last-child { display: flex; gap: 12px; }
+    .hud-main { display: flex; align-items: stretch; border: 1px solid var(--o); border-top: 0; background: var(--panel); clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%); }
+    .logo { background: var(--o); color: #000; padding: .6rem 1.25rem; min-width: 10rem; display: flex; flex-direction: column; justify-content: center; text-decoration: none; clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%); }
+    .logo b { font-size: 18px; font-weight: 800; letter-spacing: .15em; line-height: 1; }
+    .logo small { font-size: 9px; opacity: .7; letter-spacing: .2em; margin-top: 3px; }
+    .status { flex: 1; padding: 6px 16px; border-left: 1px solid var(--o); border-right: 1px solid var(--o); display: flex; flex-direction: column; justify-content: center; gap: 3px; min-width: 0; }
+    .status .loc { font-size: 9px; opacity: .6; letter-spacing: .15em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .status .msg { font-size: 10px; letter-spacing: .1em; display: flex; align-items: center; gap: 8px; }
+    .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--o); box-shadow: 0 0 6px var(--o); animation: pulse 1.2s ease-in-out infinite; }
+    .bars { display: flex; gap: 2px; align-items: flex-end; height: 10px; }
+    .bars i { width: 3px; background: var(--o); display: block; transform-origin: bottom; animation: bar 1.4s ease-in-out infinite; }
+    .nav { display: flex; }
+    .nav a { border-left: 1px solid var(--o); padding: 0 1.25rem; text-decoration: none; display: flex; flex-direction: column; align-items: center; justify-content: center; min-width: 5.5rem; transition: .15s; }
+    .nav a small { font-size: 9px; opacity: .6; letter-spacing: .2em; }
+    .nav a b { font-size: 11px; letter-spacing: .15em; }
+    .nav a:hover { background: var(--o); color: #000; }
+    .hud-sub { display: flex; justify-content: space-between; gap: 1rem; padding: 2px 12px; font-size: 9px; opacity: .55; letter-spacing: .1em; border: 1px solid var(--o); border-top: 0; background: rgba(0,0,0,.6); }
+
+    /* Window (project frame) */
+    .win { margin-top: 1.5rem; border: 2px solid var(--o); background: var(--panel); box-shadow: 0 0 28px rgba(255,102,0,.3), inset 0 0 50px rgba(255,102,0,.07); position: relative; clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%); }
+    .win-top { background: var(--o); color: #000; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; padding: 4px 16px; font-size: 10px; letter-spacing: .15em; text-transform: uppercase; font-weight: 700; }
+    .win-in { padding: 1.5rem; }
+    .meta { display: flex; flex-wrap: wrap; gap: .25rem 2rem; font-size: 9px; letter-spacing: .15em; color: var(--dim); text-transform: uppercase; padding-bottom: .8rem; border-bottom: 1px solid var(--faint); margin-bottom: 1.25rem; }
+    h1 { font-size: 1.15rem; font-weight: 800; letter-spacing: .05em; margin: 0 0 1rem; }
+    p { margin: 0 0 1rem; max-width: 54rem; opacity: .9; }
+    .index { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; margin: 0 0 1.25rem; font-size: 11px; letter-spacing: .12em; }
+    .index span { color: var(--dim); font-size: 9px; letter-spacing: .15em; margin-right: .5rem; }
+    .index a { text-decoration: none; border: 1px solid var(--line); padding: 3px 12px; transition: .15s; }
+    .index a small { opacity: .6; font-size: 9px; }
+    .index a:hover { background: var(--o); color: #000; }
+    .sec { scroll-margin-top: 1rem; }
+    .tag { font-size: 9px; letter-spacing: .15em; color: var(--dim); text-transform: uppercase; margin: 1.5rem 0 .5rem; display: flex; align-items: center; gap: .75rem; }
+    .tag::after { content: ""; flex: 1; border-top: 1px solid var(--faint); }
+    .sec { display: flex; align-items: center; gap: .75rem; margin: 2.5rem 0 1rem; font-size: .85rem; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
+    .sec em { font-style: normal; background: var(--o); color: #000; font-size: 10px; padding: 1px 6px; letter-spacing: .1em; }
+    .sec::after { content: ""; flex: 1; border-top: 1px solid var(--line); }
+    .todo { border: 1px dashed var(--o); padding: 0 .35rem; color: var(--o2); }
+
+    /* Cards */
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 1rem; }
+    .card { border: 1px solid var(--line); background: rgba(0,0,0,.6); position: relative; transition: box-shadow .2s, border-color .2s; }
+    .card:hover { border-color: var(--o); box-shadow: 0 0 18px rgba(255,102,0,.3); }
+    .card-top { background: var(--o); color: #000; display: flex; justify-content: space-between; padding: 2px 10px; font-size: 9px; letter-spacing: .15em; font-weight: 700; }
+    .shot { position: relative; display: block; overflow: hidden; }
+    .shot img { display: block; width: 100%; height: auto; }
+    .shot::before, .shot::after { content: ""; position: absolute; width: 14px; height: 14px; border: 2px solid var(--o); z-index: 2; }
+    .shot::before { top: 6px; left: 6px; border-right: 0; border-bottom: 0; }
+    .shot::after { bottom: 6px; right: 6px; border-left: 0; border-top: 0; }
+    .shot .sweep { position: absolute; left: 0; right: 0; height: 28%; top: -30%; background: linear-gradient(transparent, rgba(255,102,0,.25), transparent); animation: sweep 4.5s linear infinite; pointer-events: none; }
+    .card-body { padding: .75rem; font-size: 12px; line-height: 1.6; }
+    dl { margin: .5rem 0 0; display: grid; grid-template-columns: auto 1fr; gap: 0 .75rem; font-size: 10px; letter-spacing: .06em; }
+    dt { color: var(--dim); }
+    dd { margin: 0; }
+    .card-body a.view { display: inline-block; margin-top: .5rem; font-size: 10px; letter-spacing: .12em; text-decoration: none; border: 1px solid var(--line); padding: 1px 8px; }
+    .card-body a.view:hover, .links a:hover { background: var(--o); color: #000; }
+
+    .video { position: relative; aspect-ratio: 16 / 9; border: 1px solid var(--line); box-shadow: 0 8px 32px rgba(0,0,0,.8); }
+    .video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .slot { border: 1px dashed var(--line); min-height: 11rem; display: flex; align-items: center; justify-content: center; text-align: center; padding: 1rem; font-size: 10px; letter-spacing: .1em; color: var(--dim); background: repeating-linear-gradient(45deg, transparent 0 8px, rgba(255,102,0,.05) 8px 16px); }
+    .links { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: .5rem; }
+    .links a { display: flex; flex-direction: column; gap: 2px; padding: .6rem .9rem; border: 1px solid var(--line); text-decoration: none; transition: .15s; }
+    .links small { font-size: 9px; opacity: .55; letter-spacing: .2em; }
+    .links b { font-size: 12px; letter-spacing: .12em; }
+    .win-bot { border-top: 1px solid var(--faint); padding: 4px 16px; font-size: 9px; opacity: .45; letter-spacing: .12em; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+
+    .ticker { margin-top: 1.5rem; overflow: hidden; background: var(--o); color: #000; font-size: 12px; font-weight: 700; padding: 4px 0; white-space: nowrap; }
+    .ticker div { display: inline-block; animation: tick 22s linear infinite; padding-left: 100%; }
+
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .3; } }
+    @keyframes bar { 0%,100% { transform: scaleY(.4); } 50% { transform: scaleY(1); } }
+    @keyframes sweep { to { top: 110%; } }
+    @keyframes tick { to { transform: translateX(-100%); } }
+    @media (max-width: 640px) { .nav, .status .bars, .hud-sub span:last-child { display: none; } .logo { min-width: 0; } .win-in { padding: 1rem; } }
+    @media (prefers-reduced-motion: reduce) { .dot, .bars i, .sweep, .ticker div { animation: none; } .ticker div { padding-left: 0; } }
+  </style>
+</head>
+<body>
+  <canvas id="bg" aria-hidden="true"></canvas>
+  <div class="scan"></div><div class="vig"></div>
+
+  <div class="page">
+    <header>
+      <div class="hud-top">
+        <span>SYS::PUNK_BIT_OS</span>
+        <span><span id="sig">SIG:87%</span><span id="frm">FRM:0000</span><span id="clk">CLK:--:--:--</span></span>
+      </div>
+      <div class="hud-main">
+        <a class="logo" href="/"><b>PUNK_BIT</b><small>MULTIMEDIA_ARTIST</small></a>
+        <div class="status">
+          <div class="loc">LOC::_CO // NODE_ACTIVE // PROJECT::CYBERDOLLS</div>
+          <div class="msg"><span class="dot"></span><span id="msg">STREAM ACTIVE</span></div>
+          <div class="bars" aria-hidden="true"><i style="height:3px"></i><i style="height:5px;animation-delay:.1s"></i><i style="height:7px;animation-delay:.2s"></i><i style="height:9px;animation-delay:.3s"></i><i style="height:7px;animation-delay:.4s"></i><i style="height:5px;animation-delay:.5s"></i><i style="height:8px;animation-delay:.6s"></i><i style="height:6px;animation-delay:.7s"></i><i style="height:4px;animation-delay:.8s"></i><i style="height:7px;animation-delay:.9s"></i><i style="height:9px;animation-delay:1s"></i><i style="height:5px;animation-delay:1.1s"></i></div>
+        </div>
+        <nav class="nav">
+          <a href="/"><small>[01]</small><b>HOME</b></a>
+          <a href="#series"><small>[02]</small><b>SERIES</b></a>
+          <a href="#artist"><small>[03]</small><b>ARTIST</b></a>
+        </nav>
+      </div>
+      <div class="hud-sub"><span>■ GLSL_SHADER::ACTIVE ■ DITHER::4x4 ■ WEBGL::<span id="gl">ENABLED</span></span><span>PATH::/CYBERDOLLS ■ OUTPUT::SCREEN</span></div>
+    </header>
+
+    <main class="win">
+      <div class="win-top">
+        <span>// LOADING :: PROJECT6</span>
+        <span>2024 &#9632; REAL-TIME &#9632; AI &#9632; GLITCH</span>
+      </div>
+      <div class="win-in">
+        <div class="meta"><span>CLIENT::PERSONAL_PROJECT</span><span>TOOL::TOUCHDESIGNER + GLSL + AI</span><span>TYPE::GENERATIVE_ART</span></div>
+
+        <nav class="index" aria-label="Sections">
+          <span>// INDEX ::</span>
+          <a href="#series"><small>[01]</small> SERIES</a>
+          <a href="#video"><small>[02]</small> VIDEO_FEED</a>
+          <a href="#narrative"><small>[03]</small> NARRATIVE</a>
+          <a href="#artist"><small>[04]</small> ARTIST</a>
+        </nav>
+        <h1>CyberDolls &mdash; Digital Identity &amp; Visual Distortion</h1>
+        <p>A real-time generative art project that merges AI image synthesis with post-processing systems built in TouchDesigner. Anime-style figures generated through AI are subjected to dithering, displacement mapping, and layered pixel effects &mdash; fragmenting the source image into something unstable and synthetic.</p>
+        <p>The result questions the boundaries between digital identity, constructed beauty, and visual corruption. Each output is unique, generated in real-time, and never fully resolved.</p>
+
+        <div class="sec" id="series"><em>01</em>SERIES</div>
+        <div class="grid">
+          <article class="card">
+            <div class="card-top"><span>PRJ::01</span><span>&#9654; LIVE</span></div>
+            <a class="shot" href="https://www.instagram.com/p/C9liMDhM4DA/?img_index=1" target="_blank" rel="noopener noreferrer"><img src="/cyberdolls_01.jpg" alt="CyberDolls 01: black-and-white dithered portrait of an original anime-style character with hoop earrings, with soft color tints drifting through the halftone" width="1080" height="1080" /></a>
+            <div class="card-body">
+              <strong>CyberDolls 01</strong> — <span class="todo">[COMPLETAR pie de foto]</span>
+              <dl><dt>MEDIUM::</dt><dd>Real-time generative animation (looped)</dd><dt>FORMAT::</dt><dd>2048 × 2048 px source · 30 s loop</dd><dt>SOFTWARE::</dt><dd>TouchDesigner, GLSL, <span class="todo">[MODELO DE IA]</span></dd><dt>YEAR::</dt><dd>2024</dd></dl>
+              <a class="view" href="https://www.instagram.com/p/C9liMDhM4DA/?img_index=1" target="_blank" rel="noopener noreferrer">&gt; VIEW_ON_INSTAGRAM</a>
+            </div>
+          </article>
+          <article class="card">
+            <div class="card-top"><span>PRJ::02</span><span>&#9654; LIVE</span></div>
+            <a class="shot" href="https://www.instagram.com/p/C9liMDhM4DA/?img_index=2" target="_blank" rel="noopener noreferrer"><img src="/cyberdolls_02.jpg" alt="CyberDolls 02: original anime-style character with round glasses and a ponytail, with the TouchDesigner node network visible behind her and sparkling dithered pixel effects" width="1080" height="1080" loading="lazy" /></a>
+            <div class="card-body">
+              <strong>CyberDolls 02</strong> — <span class="todo">[COMPLETAR pie de foto]</span>
+              <dl><dt>MEDIUM::</dt><dd>Real-time generative animation (looped)</dd><dt>FORMAT::</dt><dd>1280 × 1280 px source · 15 s loop</dd><dt>SOFTWARE::</dt><dd>TouchDesigner, GLSL, <span class="todo">[MODELO DE IA]</span></dd><dt>YEAR::</dt><dd>2024</dd></dl>
+              <a class="view" href="https://www.instagram.com/p/C9liMDhM4DA/?img_index=2" target="_blank" rel="noopener noreferrer">&gt; VIEW_ON_INSTAGRAM</a>
+            </div>
+          </article>
+          <article class="card">
+            <div class="card-top"><span>PRJ::03</span><span>&#9654; LIVE</span></div>
+            <a class="shot" href="https://www.instagram.com/p/C-hMTo_sD3G/?img_index=1" target="_blank" rel="noopener noreferrer"><img src="/cyberdolls_03.jpg" alt="CyberDolls 03: original anime-style character with red bangs and a choker, rendered with halftone dithering, hearts and layered pixel glitches" width="1080" height="1080" loading="lazy" /></a>
+            <div class="card-body">
+              <strong>CyberDolls 03</strong> — <span class="todo">[COMPLETAR pie de foto]</span>
+              <dl><dt>MEDIUM::</dt><dd>Real-time generative animation (looped)</dd><dt>FORMAT::</dt><dd>1280 × 1280 px source · 41 s loop</dd><dt>SOFTWARE::</dt><dd>TouchDesigner, GLSL, <span class="todo">[MODELO DE IA]</span></dd><dt>YEAR::</dt><dd>2024</dd></dl>
+              <a class="view" href="https://www.instagram.com/p/C-hMTo_sD3G/?img_index=1" target="_blank" rel="noopener noreferrer">&gt; VIEW_ON_INSTAGRAM</a>
+            </div>
+          </article>
+
+          <article class="card">
+            <div class="card-top"><span>PRJ::04</span><span>&#9654; LIVE</span></div>
+            <a class="shot" href="https://www.instagram.com/p/C9iQ0AQvkCc/?img_index=2" target="_blank" rel="noopener noreferrer"><img src="/cyberdolls_04.jpg" alt="CyberDolls 04: original anime-style character with round glasses, halftone dithering and wavy displacement distortion on a blue grid background" width="1080" height="1080" loading="lazy" /><span class="sweep" style="animation-delay:0s"></span></a>
+            <div class="card-body">
+              <strong>CyberDolls 04</strong> — <span class="todo">[COMPLETAR pie de foto]</span>
+              <dl><dt>MEDIUM::</dt><dd>Real-time generative animation (looped)</dd><dt>FORMAT::</dt><dd>540 × 540 px source · 8 s loop</dd><dt>SOFTWARE::</dt><dd>TouchDesigner, GLSL, <span class="todo">[MODELO DE IA]</span></dd><dt>YEAR::</dt><dd>2024</dd></dl>
+              <a class="view" href="https://www.instagram.com/p/C9iQ0AQvkCc/?img_index=2" target="_blank" rel="noopener noreferrer">&gt; VIEW_ON_INSTAGRAM</a>
+            </div>
+          </article>
+          <article class="card">
+            <div class="card-top"><span>PRJ::05</span><span>&#9654; LIVE</span></div>
+            <a class="shot" href="https://www.instagram.com/p/C9HCfo6Msod/?img_index=2" target="_blank" rel="noopener noreferrer"><img src="/cyberdolls_05.jpg" alt="CyberDolls 05: original anime-style character with short dark hair and pink eyes, over a glitching pixel-dithered sunset background" width="1080" height="1080" loading="lazy" /><span class="sweep" style="animation-delay:1.5s"></span></a>
+            <div class="card-body">
+              <strong>CyberDolls 05</strong> — <span class="todo">[COMPLETAR pie de foto]</span>
+              <dl><dt>MEDIUM::</dt><dd>Real-time generative animation (looped)</dd><dt>FORMAT::</dt><dd>540 × 540 px source · 10 s loop</dd><dt>SOFTWARE::</dt><dd>TouchDesigner, GLSL, <span class="todo">[MODELO DE IA]</span></dd><dt>YEAR::</dt><dd>2024</dd></dl>
+              <a class="view" href="https://www.instagram.com/p/C9HCfo6Msod/?img_index=2" target="_blank" rel="noopener noreferrer">&gt; VIEW_ON_INSTAGRAM</a>
+            </div>
+          </article>
+          <article class="card">
+            <div class="card-top"><span>PRJ::06</span><span>&#9654; LIVE</span></div>
+            <a class="shot" href="https://www.instagram.com/punk_bit/" target="_blank" rel="noopener noreferrer"><img src="/cyberdolls_06.jpg" alt="CyberDolls 06: original anime-style character with glasses, sparkles and pixel-block glitches over her face" width="1080" height="1080" loading="lazy" /><span class="sweep" style="animation-delay:3s"></span></a>
+            <div class="card-body">
+              <strong>CyberDolls 06</strong> — <span class="todo">[COMPLETAR pie de foto]</span>
+              <dl><dt>MEDIUM::</dt><dd>Real-time generative animation (looped)</dd><dt>FORMAT::</dt><dd>540 × 540 px source · 10 s loop</dd><dt>SOFTWARE::</dt><dd>TouchDesigner, GLSL, <span class="todo">[MODELO DE IA]</span></dd><dt>YEAR::</dt><dd>2024</dd></dl>
+              <a class="view" href="https://www.instagram.com/punk_bit/" target="_blank" rel="noopener noreferrer">&gt; VIEW_ON_INSTAGRAM</a>
+            </div>
+          </article>
+        </div>
+
+        <div class="sec" id="video"><em>02</em>VIDEO_FEED</div>
+        <div class="tag">// VIDEO_FEED :: STREAM_ACTIVE</div>
+        <div class="video"><iframe src="https://www.youtube.com/embed/14xWbF2yR_s?rel=0" title="CyberDolls in TouchDesigner" loading="lazy" allow="accelerometer; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+        <div class="tag">SOURCE:: YouTube — CyberDolls in TouchDesigner (ANdroID Graphics)</div>
+
+        <div class="sec" id="narrative"><em>03</em>NARRATIVE</div>
+        <p><strong>Concept.</strong> CyberDolls is a series about digital identity, constructed beauty and visual corruption. Each face is built to be desirable and then deliberately broken: halftone dots eat the skin, outlines wobble and tear, and the image keeps sliding between portrait and noise. Every output is unique. It is generated in real time and never finishes resolving, so the viewer is always watching a face in the middle of becoming, or of dissolving.</p>
+        <p><strong>Pipeline.</strong> The process starts with AI image generation to create the characters. Those images are then dithered, pushed through displacement mapping, and covered with layered pixel effects built in TouchDesigner and GLSL. The algorithm is not a filter applied at the end: it is the second author of the piece. Because the effects run live, the same character never looks the same twice, and the glitch is a feature of the portrait rather than a flaw in it.</p>
+        <p><strong>Origin.</strong> <span class="todo">[COMPLETAR: cómo nació el proyecto]</span></p>
+        <p><strong>Personal and cultural context.</strong> <span class="todo">[COMPLETAR: contexto personal o cultural]</span></p>
+        <p><strong>Originality statement.</strong> The characters in CyberDolls are original. They were generated by me using <span class="todo">[MODELO]</span>. They are not based on any existing anime characters or on the work of other artists.</p>
+
+        <div class="sec" id="artist"><em>04</em>ARTIST</div>
+        <p>Johann Jair Andrés Martínez, known as “Andro” and under the handle punk_bit, is a self-taught multimedia artist and creative technologist based in Colombia. His practice spans real-time generative art, GLSL shaders, TouchDesigner, video mapping, live VJing, holography on dichromated gelatin, LED installations and 3D work in Blender. Through the Volarte initiative, supported by CoCrea, he collaborated with museums and airports across Latin America, bringing animated artworks to large public LED screens. He created live visuals for Bring Me The Horizon concerts and projected onto a building facade at OFFF Festival Barcelona 2025. Across formats, his work treats code as a visual language and art as an interface for opening new aesthetic possibilities.</p>
+        <div class="tag">// NETWORK_LINKS :: SELECT_CHANNEL</div>
+        <ul class="links">
+          <li><a href="https://www.youtube.com/@ANdroIDGraphics00" target="_blank" rel="noopener noreferrer"><small>[01]</small><b>YOUTUBE</b><small>ANdroIDGraphics00</small></a></li>
+          <li><a href="https://www.patreon.com/c/project2501" target="_blank" rel="noopener noreferrer"><small>[02]</small><b>PATREON</b><small>SIGNAL_2501</small></a></li>
+          <li><a href="https://instagram.com/punk_bit" target="_blank" rel="noopener noreferrer"><small>[03]</small><b>INSTAGRAM</b><small>@punk_bit</small></a></li>
+          <li><a href="/"><small>[04]</small><b>WEB</b><small>punkbit.art</small></a></li>
+        </ul>
+      </div>
+      <div class="win-bot"><span>ORIGIN::_CO ■ NODE::PUNK_BIT</span><span>&copy; 2024 ANDRO / PUNK_BIT ■ STATUS::OPEN</span></div>
+    </main>
+
+    <div class="ticker" aria-hidden="true"><div>CYBERDOLLS // DIGITAL IDENTITY // VISUAL DISTORTION // REAL-TIME // PUNK_BIT.ART // CREATIVE CODING // GENERATIVE SYSTEMS</div></div>
+  </div>
+
+  <script>
+  (function () {
+    // HUD live readouts
+    var frm = 0, msgs = ["STREAM ACTIVE","SIGNAL STABLE","RENDERING ACTIVE","GENERATIVE MODE ON","SHADER LOADED","NODE CONNECTED","OUTPUT: CYBERDOLLS"];
+    function tick() {
+      frm++;
+      document.getElementById("clk").textContent = "CLK:" + new Date().toTimeString().slice(0, 8);
+      document.getElementById("frm").textContent = "FRM:" + String(frm).padStart(4, "0");
+      document.getElementById("sig").textContent = "SIG:" + (80 + Math.floor(Math.random() * 15)) + "%";
+      if (frm % 3 === 0) document.getElementById("msg").textContent = msgs[Math.floor(Math.random() * msgs.length)];
+    }
+    tick(); setInterval(tick, 1000);
+
+    // Dithered shader background (progressive enhancement)
+    var c = document.getElementById("bg");
+    var gl = c.getContext("webgl");
+    if (!gl) { document.getElementById("gl").textContent = "OFF"; return; }
+    var vs = "attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}";
+    var fs = "precision mediump float;uniform float t;uniform vec2 r;" +
+      "float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}" +
+      "float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y);}" +
+      "float bayer(vec2 px){vec2 q=mod(floor(px),4.);float a=mod(q.x,2.),b=mod(q.y,2.);" +
+      "float c1=a*2.+b*3.;float c2=mod(floor(q.x/2.)*2.+floor(q.y/2.),2.)*1.;" +
+      "return (mod(c1,4.)*4.+c2*2.+mod(q.x+q.y,2.)+.5)/16.;}" +
+      "void main(){vec2 uv=gl_FragCoord.xy/r;float T=t*.18;" +
+      "vec2 fl=vec2(n(uv*3.+vec2(T,T*.5)),n(uv*3.+vec2(T*.7,-T)));" +
+      "float v=n(uv*5.+fl*.5+T*.2)*.65+n(uv*12.-fl*.4+T*.15)*.45;" +
+      "float d=step(bayer(gl_FragCoord.xy),v*1.1);" +
+      "float g=max(step(.93,fract(uv.x*28.)),step(.93,fract(uv.y*48.)))*.18;" +
+      "vec3 o=vec3(1.,.42,0.);vec3 col=mix(vec3(0.),o*.4,d)+o*g*.6;" +
+      "col*=1.-smoothstep(.35,1.1,length(uv-.5)*1.8);gl_FragColor=vec4(col,1.);}";
+    function sh(type, src) { var s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); return s; }
+    var pr = gl.createProgram();
+    gl.attachShader(pr, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(pr, sh(gl.FRAGMENT_SHADER, fs));
+    gl.linkProgram(pr);
+    if (!gl.getProgramParameter(pr, gl.LINK_STATUS)) { document.getElementById("gl").textContent = "OFF"; return; }
+    gl.useProgram(pr);
+    gl.bindBuffer(gl.ARRAY_BUFFER, gl.createBuffer());
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1,1,-1,-1,1,1,1]), gl.STATIC_DRAW);
+    var loc = gl.getAttribLocation(pr, "p"); gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    var ut = gl.getUniformLocation(pr, "t"), ur = gl.getUniformLocation(pr, "r");
+    function size() { c.width = Math.max(1, c.offsetWidth >> 1); c.height = Math.max(1, c.offsetHeight >> 1); gl.viewport(0, 0, c.width, c.height); }
+    size(); window.addEventListener("resize", size);
+    var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches, t0 = Date.now();
+    function draw() {
+      gl.uniform1f(ut, (Date.now() - t0) / 1000); gl.uniform2f(ur, c.width, c.height);
+      gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+      if (!reduce) requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+  </script>
+</body>
+</html>
