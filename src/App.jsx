@@ -1144,8 +1144,6 @@ const App = () => {
           </motion.a>
         </div>
 
-        {/* Ticker footer */}
-        <Ticker text="LIFE IS JUST A GAME // IN THE SHADOWS // PUNK_BIT.ART // CREATIVE CODING // GENERATIVE SYSTEMS" />
       </div>
 
       <style>{`
