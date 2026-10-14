@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pixeldrama — Andro / punk_bit</title>
+  <meta name="description" content="Pixeldrama: generative visuals made in TouchDesigner about the moment a thing stops being the thing. Ultramarine, dithering and pixels." />
+  <link rel="canonical" href="https://punkbit.art/pixeldrama" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://punkbit.art/pixeldrama" />
+  <meta property="og:title" content="Pixeldrama — Andro / punk_bit" />
+  <meta property="og:description" content="Generative visuals made in TouchDesigner about the moment a thing stops being the thing." />
+  <meta property="og:image" content="https://punkbit.art/pixeldrama_estatus.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Noto+Sans+KR:wght@500;800&display=swap" rel="stylesheet" />
+  <style>
+    :root { --blue: #0b22b8; --ink: #0b22b8; --paper: #f6f8ff; --soft: #dfe5ff; --line: 2px solid var(--blue); }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; scrollbar-color: var(--blue) var(--paper); scrollbar-width: thin; }
+    body { margin: 0; background: var(--paper); color: var(--ink); font-family: "Space Mono", ui-monospace, monospace; font-size: 15px; line-height: 1.8; }
+    ::selection { background: var(--blue); color: #fff; }
+    a { color: inherit; text-decoration-thickness: 2px; text-underline-offset: 3px; }
+    a:hover { background: var(--blue); color: #fff; }
+    img, video { display: block; width: 100%; height: auto; image-rendering: pixelated; }
+    .wrap { max-width: 72rem; margin: 0 auto; padding: 0 1.25rem; }
+    .px { font-family: "Silkscreen", "Space Mono", monospace; text-transform: uppercase; letter-spacing: .06em; }
+    .ko { font-family: "Noto Sans KR", sans-serif; font-weight: 800; }
+
+    /* top bar */
+    .top { position: sticky; top: 0; z-index: 10; background: var(--paper); border-bottom: var(--line); }
+    .top .wrap { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding-top: .6rem; padding-bottom: .6rem; }
+    .top b { font-size: 1.05rem; }
+    .top nav { display: flex; gap: 1.25rem; font-size: .8rem; }
+    .top nav a { text-decoration: none; padding: 0 .35rem; }
+
+    /* hero */
+    .hero { padding: 3rem 0 2rem; }
+    .hero .meta { font-size: .75rem; display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; border-bottom: var(--line); padding-bottom: .6rem; margin-bottom: 1.5rem; }
+    h1 { font-family: "Silkscreen", monospace; font-weight: 700; font-size: clamp(2rem, 9.5vw, 7rem); line-height: .95; letter-spacing: .02em; margin: 0 0 1.5rem; text-transform: none; }
+    .epigraph { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; border: var(--line); padding: 1.25rem; background: #fff; margin-top: 2rem; }
+    .epigraph .ko { font-size: clamp(1.05rem, 2.4vw, 1.5rem); line-height: 1.5; margin: 0; word-break: keep-all; }
+    .epigraph p { margin: 0; }
+    .epigraph small { display: block; margin-top: .75rem; font-size: .7rem; opacity: .7; }
+    .banner { border: var(--line); margin-top: 2rem; background: #fff; }
+
+    /* sections */
+    section { padding: 3rem 0 1rem; }
+    .label { display: flex; align-items: center; gap: .75rem; font-size: .8rem; margin-bottom: 1.5rem; }
+    .label span { background: var(--blue); color: #fff; padding: 0 .5rem; }
+    .label::after { content: ""; flex: 1; border-top: var(--line); }
+    h2 { font-family: "Silkscreen", monospace; font-size: clamp(1.6rem, 5vw, 3rem); margin: 0 0 1rem; line-height: 1.1; text-transform: none; }
+    .story { display: grid; grid-template-columns: 1.4fr 1fr; gap: 2.5rem; align-items: start; }
+    .story p { margin: 0 0 1.1rem; max-width: 40rem; }
+    .story .quote { border-left: 6px solid var(--blue); padding-left: 1rem; font-style: italic; }
+    .facts { border: var(--line); background: #fff; }
+    .facts h3 { margin: 0; padding: .5rem .9rem; border-bottom: var(--line); font-size: .85rem; }
+    .facts dl { margin: 0; padding: .9rem; display: grid; grid-template-columns: auto 1fr; gap: .35rem .9rem; font-size: .8rem; }
+    .facts dt { opacity: .65; }
+    .facts dd { margin: 0; }
+
+    /* chapters */
+    .chapter { display: grid; grid-template-columns: 1fr; gap: 1rem; margin-bottom: 4rem; }
+    .chapter header { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; border-bottom: var(--line); padding-bottom: .4rem; }
+    .chapter header h2 { margin: 0; font-size: clamp(1.4rem, 4vw, 2.2rem); }
+    .chapter header .n { font-size: .8rem; }
+    .frame { border: var(--line); background: #fff; position: relative; }
+    .frame .tag { position: absolute; left: 0; top: 0; background: var(--blue); color: #fff; font-size: .65rem; padding: .1rem .55rem; z-index: 2; }
+    .cap { max-width: 44rem; margin: 0; font-style: italic; font-size: 1.05rem; }
+    .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: start; }
+    .small { max-width: 34rem; }
+
+    /* tickers */
+    .ticker { border-top: var(--line); border-bottom: var(--line); margin: 1rem 0 3rem; background: var(--blue); }
+
+    /* credits */
+    .links { list-style: none; padding: 0; margin: 1.25rem 0 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: .75rem; }
+    .links a { display: block; border: var(--line); background: #fff; padding: .7rem .9rem; text-decoration: none; }
+    .links a:hover { background: var(--blue); color: #fff; }
+    .links small { display: block; opacity: .65; font-size: .7rem; }
+    footer { margin-top: 4rem; border-top: var(--line); padding: 1.25rem 0 2.5rem; font-size: .75rem; display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+
+    @media (max-width: 760px) {
+      .epigraph, .story, .pair, .duo { grid-template-columns: 1fr; }
+      .top nav { gap: .5rem; font-size: .7rem; }
+      .top .wrap { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+  <div class="top">
+    <div class="wrap">
+      <b class="px"><a href="/" style="text-decoration:none">punk_bit</a> / Pixeldrama</b>
+      <nav class="px"><a href="#story">Story</a><a href="#chapters">Chapters</a><a href="#credits">Credits</a></nav>
+    </div>
+  </div>
+
+  <main class="wrap">
+    <div class="hero">
+      <div class="meta px"><span>Generative visuals</span><span>TouchDesigner</span><span>Ultra Azul // dithering</span><span>2024</span></div>
+      <h1>Pixeldrama</h1>
+      <div class="banner"><video src="/pixeldrama_bar.mp4" poster="/pixeldrama_bar.jpg" muted loop playsinline preload="none" aria-label="Animated dithered gradient of blue squares"></video></div>
+      <div class="epigraph">
+        <p class="ko" lang="ko">우리는 만날 때에 떠날 것을 염려하는 것과 같이 떠날 때에 다시 만날 것을 믿습니다</p>
+        <p>As we worry about parting when we meet, so we believe, when we part, that we will meet again.
+          <small>Epigraph: a classic Korean poem. Translation is approximate.</small></p>
+      </div>
+    </div>
+
+    <section id="story">
+      <div class="label px"><span>00</span>Story</div>
+      <div class="story">
+        <div>
+          <h2>The thing stops being the thing</h2>
+          <p>Pixeldrama is about the moment something stops being what it was. A thing that was one wants to differentiate: it changes its path, and from then on it can never be the same again.</p>
+          <p>It is not about anyone in particular. It is a general movement. What unites and what separates, the need to be different and the pull to go back. Every path that splits keeps asking where it began.</p>
+          <p>Followed far enough, that question points to the origin of everything: before there was difference, there was only one thing.</p>
+          <p class="quote">What if we all just become one thing?</p>
+        </div>
+        <aside class="facts">
+          <h3 class="px">Status</h3>
+          <dl>
+            <dt>Title</dt><dd>Pixeldrama</dd>
+            <dt>Medium</dt><dd>Generative animation</dd>
+            <dt>Tool</dt><dd>TouchDesigner</dd>
+            <dt>Palette</dt><dd>Ultra Azul, white</dd>
+            <dt>Technique</dt><dd>Dithering</dd>
+            <dt>Canvas</dt><dd>1920 × 1080 px</dd>
+            <dt>Year</dt><dd>2024</dd>
+          </dl>
+        </aside>
+      </div>
+    </section>
+
+    <section id="chapters">
+      <div class="label px"><span>01</span>Chapters</div>
+
+      <article class="chapter">
+        <header><h2>One</h2><span class="n px">Chapter 01</span></header>
+        <div class="frame"><span class="tag px">One</span><video src="/pixeldrama_one.mp4" poster="/pixeldrama_one.jpg" muted loop playsinline preload="none" aria-label="A blue block of dithered geometric shapes beside a column of Korean text"></video></div>
+        <p class="cap">Before the difference,<br />there was one.</p>
+      </article>
+
+      <article class="chapter">
+        <header><h2 class="ko">한</h2><span class="n px">Chapter 02</span></header>
+        <div class="frame"><span class="tag px">한</span><video src="/pixeldrama_han.mp4" poster="/pixeldrama_han.jpg" muted loop playsinline preload="none" aria-label="A dithered eye and a counter of repeating digits next to the Korean character 한"></video></div>
+        <p class="cap">An eye that watches<br />itself becoming.</p>
+      </article>
+
+      <div class="ticker"><video src="/pixeldrama_ticker_a.mp4" poster="/pixeldrama_ticker_a.jpg" muted loop playsinline preload="none" aria-hidden="true"></video></div>
+
+      <article class="chapter">
+        <header><h2>Estatus · Trama · Diferencia</h2><span class="n px">Chapter 03</span></header>
+        <div class="frame"><span class="tag px">Ultra Azul // dithering</span><video src="/pixeldrama_estatus.mp4" poster="/pixeldrama_estatus.jpg" muted loop playsinline preload="none" aria-label="Three panels titled Estatus, Trama and Diferencia with text, a dithered pattern and a difference map"></video></div>
+        <p class="cap">What is, what weaves,<br />what is no longer.</p>
+      </article>
+
+      <article class="chapter">
+        <header><h2>Revertir</h2><span class="n px">Chapter 04</span></header>
+        <div class="pair">
+          <div class="frame"><span class="tag px">White</span><video src="/pixeldrama_revertir_white.mp4" poster="/pixeldrama_revertir_white.jpg" muted loop playsinline preload="none" aria-label="Concentric squares of blue pixels on white with the title Revertir"></video></div>
+          <div class="frame"><span class="tag px">Blue</span><video src="/pixeldrama_revertir_blue.mp4" poster="/pixeldrama_revertir_blue.jpg" muted loop playsinline preload="none" aria-label="The same concentric squares in white on a blue background"></video></div>
+        </div>
+        <p class="cap">Every road that leaves<br />remembers the center.</p>
+      </article>
+
+      <div class="ticker"><video src="/pixeldrama_ticker_b.mp4" poster="/pixeldrama_ticker_b.jpg" muted loop playsinline preload="none" aria-hidden="true"></video></div>
+
+      <article class="chapter">
+        <header><h2>Refraction</h2><span class="n px">Chapter 05</span></header>
+        <div class="duo">
+          <div class="frame"><img src="/pixeldrama_refraction.png" alt="Title Refraction with the text: When I look in the mirror, why doesn't it feel the same?" loading="lazy" /></div>
+          <div class="frame"><img src="/pixeldrama_landscape.jpg" alt="A dithered landscape of blue dots on white" loading="lazy" /></div>
+        </div>
+        <p class="cap small">The mirror keeps the question.<br />The face keeps changing.</p>
+      </article>
+    </section>
+
+    <section id="credits">
+      <div class="label px"><span>02</span>Credits</div>
+      <h2>Andro / punk_bit</h2>
+      <p class="small">Multimedia artist from Colombia. Real-time generative art, GLSL and TouchDesigner.</p>
+      <ul class="links">
+        <li><a href="https://www.behance.net/gallery/200280581/PIXELDRAMA" target="_blank" rel="noopener noreferrer"><small class="px">Behance</small>Pixeldrama</a></li>
+        <li><a href="https://www.youtube.com/@ANdroIDGraphics00" target="_blank" rel="noopener noreferrer"><small class="px">YouTube</small>ANdroIDGraphics00</a></li>
+        <li><a href="https://instagram.com/punk_bit" target="_blank" rel="noopener noreferrer"><small class="px">Instagram</small>@punk_bit</a></li>
+        <li><a href="https://www.patreon.com/c/project2501" target="_blank" rel="noopener noreferrer"><small class="px">Patreon</small>project2501</a></li>
+        <li><a href="mailto:johhannmartinez@hotmail.com"><small class="px">Mail</small>johhannmartinez@hotmail.com</a></li>
+      </ul>
+    </section>
+
+    <footer class="px">
+      <span>Pixeldrama</span>
+      <span>&copy; 2024 Andro / punk_bit</span>
+    </footer>
+  </main>
+
+  <script>
+    // Play each loop only while visible; keep posters for reduced motion
+    (function () {
+      var vids = document.querySelectorAll("video");
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !("IntersectionObserver" in window)) return;
+      var io = new IntersectionObserver(function (es) {
+        es.forEach(function (e) {
+          if (e.isIntersecting) { e.target.play().catch(function () {}); } else { e.target.pause(); }
+        });
+      }, { threshold: 0.25 });
+      vids.forEach(function (v) { io.observe(v); });
+    })();
+  </script>
+</body>
+</html>
